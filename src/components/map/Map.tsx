@@ -1,8 +1,6 @@
 import * as React from "react";
-import { MouseOverlay, Position } from "../mouse-overlay/MouseOverlay";
+import { Point } from "../../types";
 import "./Map.css";
-
-type Cell = [number, number];
 
 interface Props {
   cellSize: number;
@@ -10,35 +8,71 @@ interface Props {
 }
 
 interface State {
-  hovered: Cell | null;
+  painting: boolean;
+  hovered: Point | null;
+  painted: { [key: string]: { [key: string]: boolean } };
 }
 
 export class Map extends React.Component<Props, State> {
-  public state = {
-    hovered: null
+  public state: State = {
+    painting: false,
+    hovered: null,
+    painted: {}
   };
 
-  private handleMouseMove = (pos: Position) => {
-    const { hovered } = this.state;
-    const cell: Cell = [
-      Math.floor(pos.x / this.props.cellSize),
-      Math.floor(pos.y / this.props.cellSize)
-    ];
-    if (!hovered || hovered[0] !== cell[0] || hovered[1] !== cell[1]) {
+  private cellFromPos = (pos: Point): Point => {
+    return {
+      x: Math.floor(pos.x / this.props.cellSize),
+      y: Math.floor(pos.y / this.props.cellSize)
+    };
+  };
+
+  private getPaintedCells = (): Point[] => {
+    return Object.keys(this.state.painted).reduce((cells: Point[], xPos) => {
+      Object.keys(this.state.painted[xPos]).forEach(yPos => {
+        cells.push({ x: parseInt(xPos, 10), y: parseInt(yPos, 10) });
+      });
+      return cells;
+    }, []);
+  };
+
+  private paintCell = (cell: Point) => {
+    this.setState(state => {
+      state.painted[cell.x] = state.painted[cell.x] || {};
+      state.painted[cell.x][cell.y] = true;
+      return state;
+    });
+  };
+
+  private handleMouseMove = (pos: Point) => {
+    const { painting, hovered } = this.state;
+    const cell = this.cellFromPos(pos);
+    if (
+      !hovered ||
+      (hovered && (hovered.x !== cell.x || hovered.y !== cell.y))
+    ) {
       this.setState({
         hovered: cell
       });
+      if (painting) {
+        this.paintCell(cell);
+      }
     }
   };
   private handleMouseLeave = () => {
     this.setState({ hovered: null });
   };
 
-  private handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log("down", this.state.hovered);
+  private handleMouseDown = (pos: Point) => {
+    const cell = this.cellFromPos(pos);
+    this.setState({ painting: true });
+    this.paintCell(cell);
   };
-  private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log("up", this.state.hovered);
+
+  private handleMouseUp = (pos: Point) => {
+    const cell = this.cellFromPos(pos);
+    this.setState({ painting: false });
+    this.paintCell(cell);
   };
 
   public render() {
@@ -50,19 +84,29 @@ export class Map extends React.Component<Props, State> {
           width: this.props.cellSize * this.props.gridSize,
           height: this.props.cellSize * this.props.gridSize
         }}
-        onMouseDown={this.handleMouseDown}
-        onMouseUp={this.handleMouseUp}
         onMouseLeave={this.handleMouseLeave}
       >
-        <MouseOverlay onMouseMove={this.handleMouseMove} />
+        {this.getPaintedCells().map(cell => (
+          <div
+            key={`painted-${cell.x}-${cell.y}`}
+            className="painted-cell"
+            style={{
+              width: this.props.cellSize,
+              height: this.props.cellSize,
+              top: cell.y * this.props.cellSize,
+              left: cell.x * this.props.cellSize
+            }}
+          />
+        ))}
+
         {hovered && (
           <div
             className="hovered-cell"
             style={{
               width: this.props.cellSize,
               height: this.props.cellSize,
-              top: hovered[1] * this.props.cellSize,
-              left: hovered[0] * this.props.cellSize
+              top: hovered.y * this.props.cellSize,
+              left: hovered.x * this.props.cellSize
             }}
           />
         )}
