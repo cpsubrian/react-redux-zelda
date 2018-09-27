@@ -1,17 +1,18 @@
-import * as React from 'react';
-import { render } from 'react-dom';
-import Hello from './Hello';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
-const styles = {
-  fontFamily: 'sans-serif',
-  textAlign: 'center'
-};
+import App from "./components/app/App";
 
-const App = () => (
-  <div style={styles}>
-    <Hello name="CodeSandbox" />
-    <h2>Start editing to see some magic happen {'\u2728'}</h2>
-  </div>
+import "./index.css";
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root") as HTMLElement
 );
 
-render(<App />, document.getElementById('root'));
+// import registerServiceWorker from "./registerServiceWorker";
+// registerServiceWorker();

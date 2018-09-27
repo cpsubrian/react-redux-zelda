@@ -1,0 +1,10 @@
+.map {
+  position: relative;
+  background: #777;
+  border: 1px solid #fff;
+  cursor: pointer;
+}
+.hovered-cell {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+}
