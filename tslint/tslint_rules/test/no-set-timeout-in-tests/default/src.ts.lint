@@ -1,0 +1,12 @@
+const NOOP = () => {}
+
+const tmp = setInterval(NOOP, 123);
+
+// mentioning setTimeout in a comment should be fine
+setTimeout(() => {
+  clearInterval(tmp);
+  setTimeout(NOOP, 123);
+}, 123);
+
+alert('ok!');
+NOOP('ok!');

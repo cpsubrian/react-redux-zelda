@@ -1,0 +1,6 @@
+{
+  "extends": [
+    "./advice.json",
+    "tslint-config-prettier"
+  ]
+}

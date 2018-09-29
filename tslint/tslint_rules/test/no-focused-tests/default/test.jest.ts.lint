@@ -1,0 +1,13 @@
+fdescribe('this should be fine since not a test file', () => {
+~~~~~~~~~             ['fdescribe' should only be used for troubleshooting, please restore to default name]
+  fit('OK', () => {
+  ~~~             ['fit' should only be used for troubleshooting, please restore to default name]
+  });
+});
+
+describe.only('this should be fine since not a test file', () => {
+         ~~~~             ['only' should only be used for troubleshooting, please restore to default name]
+  it.only('OK', () => {
+     ~~~~             ['only' should only be used for troubleshooting, please restore to default name]
+  });
+});

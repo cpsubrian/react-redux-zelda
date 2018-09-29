@@ -1,0 +1,6 @@
+{
+  "extends": [
+    "./autofix.json",
+    "tslint-config-prettier"
+  ]
+}

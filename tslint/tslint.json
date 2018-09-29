@@ -1,0 +1,8 @@
+{
+  "extends": [
+    "./tslint_advice.json",
+    "./tslint_warning.json",
+    "./tslint_error.json",
+    "./tslint_autofix.json"
+  ]
+}

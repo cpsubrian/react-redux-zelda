@@ -1,0 +1,38 @@
+{
+  "defaultSeverity": "warn",
+  "rules": {
+    "no-any": true,
+
+    "ban": [true,
+      ["$u", "clone", "$u.clone is deprecated. Consider using object spread operator instead.\nSee https://github.com/sebmarkbage/ecmascript-rest-spread"],
+      ["$u", "extend", "$u.extend is deprecated. Consider using object spread operator instead.\nSee https://github.com/sebmarkbage/ecmascript-rest-spread"],
+      ["$u", "defaults", "$u.defaults is deprecated. Consider using object spread operator instead.\nSee https://github.com/sebmarkbage/ecmascript-rest-spread"],
+      ["$u", "extendOwn", "$u.extendOwn is deprecated. Consider using object spread operator instead.\nSee https://github.com/sebmarkbage/ecmascript-rest-spread"],
+      ["Object", "assign", "Code style: consider using object spread operator instead.\nSee https://github.com/sebmarkbage/ecmascript-rest-spread"],
+      ["createReactClass", "Classic React classes are deprecated. Please inherit from React.Component or use stateless functional component.\nSee: https://facebook.github.io/react/docs/components-and-props.html#functional-and-class-components"],
+      ["React", "createClass", "Classic React classes are deprecated. Please inherit from React.Component or use stateless functional component.\nSee: https://facebook.github.io/react/docs/components-and-props.html#functional-and-class-components"],
+      ["IMPLICIT_ANY", "IMPLICIT_ANY was an automatically added type that effectively turns off the type checker.  Please try to choose a better type when modifying code that uses it!"],
+      ["*" ,"legacyUnindexedQuery", "legacyUnindexedQuery() allows for writing unsafe database queries in Paper! Use query() and it's index specific where() methods instead. Don't be the person that took down Paper."],
+      ["sqlobj" ,"insert", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."],
+      ["sqlobj" ,"insertOrUpdate", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."],
+      ["sqlobj" ,"update", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."],
+      ["sqlobj" ,"updateSingle", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."],
+      ["sqlobj" ,"selectSingle", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."],
+      ["sqlobj" ,"selectSingleTyped", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."],
+      ["sqlobj" ,"selectMulti", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."],
+      ["sqlobj" ,"selectMultiTyped", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."],
+      ["sqlobj" ,"deleteRows", "Paper's sqlobj interface is being deprecated. Use a class from the /core_data/entities/generated_entities/ folder if available."]
+    ],
+    "forin": true,
+
+    "prefer-const": false,
+
+    "no-typeof-undefined": true,
+
+    "hardcoded-space": true
+  },
+
+  "rulesDirectory": [
+    "./tslint_rules"
+  ]
+}

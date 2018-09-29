@@ -1,0 +1,9 @@
+fdescribe('this should be fine since not a test file', () => {
+  fit('OK', () => {
+  });
+});
+
+describe.only('this should be fine since not a test file', () => {
+  it.only('OK', () => {
+  });
+});

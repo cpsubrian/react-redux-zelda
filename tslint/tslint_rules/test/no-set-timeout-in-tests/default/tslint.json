@@ -1,0 +1,6 @@
+{
+  "rulesDirectory": ["../../../"],
+  "rules": {
+     "no-set-timeout-in-tests": true
+   }
+}

@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "tslint-plugin-prettier"
+  ],
+
+  "defaultSeverity": "error",
+  "rules": {
+    "prettier": [
+      true,
+      {
+        "printWidth": 100,
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "bracketSpacing": false
+      }
+    ]
+  },
+
+  "rulesDirectory": [
+    "./tslint_rules"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "extends": [
+    "./error.json",
+    "tslint-config-prettier"
+  ]
+}

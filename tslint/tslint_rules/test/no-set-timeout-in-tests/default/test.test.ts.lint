@@ -1,0 +1,7 @@
+// jasmine test should not be affected by this rule
+const NOOP = () => {}
+setTimeout(() => {
+  clearInterval(tmp);
+  setTimeout(NOOP, 123);
+}, 123);
+const tmp = setInterval(NOOP, 123);

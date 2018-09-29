@@ -1,0 +1,15 @@
+const NOOP = () => {}
+
+const tmp = setInterval(NOOP, 123);
+            ~~~~~~~~~~~             ['setInterval' should not be be used in tests. Use timer mocks or jasmine.clock()]
+
+// mentioning setTimeout in a comment should be fine
+setTimeout(() => {
+~~~~~~~~~~         ['setTimeout' should not be be used in tests. Use timer mocks or jasmine.clock()]
+  clearInterval(tmp);
+  setTimeout(NOOP, 123);
+  ~~~~~~~~~~             ['setTimeout' should not be be used in tests. Use timer mocks or jasmine.clock()]
+}, 123);
+
+alert('ok!');
+NOOP('ok!');
