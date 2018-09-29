@@ -1,14 +1,5 @@
 .map {
-  position: relative;
-  cursor: pointer;
-}
-.hovered-cell {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.2);
-  pointer-events: none;
-}
-.painted-cell {
-  position: absolute;
-  background: teal;
-  pointer-events: none;
+  background: #999;
+  border: 1px solid #bbb;
+  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.2);
 }

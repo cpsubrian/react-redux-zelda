@@ -1,0 +1,10 @@
+.toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #222;
+  border-top: 1px solid #555;
+  box-shadow: 0 -5px 5px rgba(0, 0, 0, 0.15);
+}
