@@ -1,96 +1,114 @@
 import * as React from 'react';
-import {Point} from '../../types';
-import {BaseLayer} from '../layers/BaseLayer';
+import {connect} from 'react-redux';
+import {Layer, Point} from '../../types';
+import {StoreState} from '../../data/types';
+import {selectedSelector, layersSelector} from '../../data/selectors';
+import {paintSprite} from '../../data/action_creators';
+import {getSpriteAttrs} from '../../sprites';
+import {MouseLayer} from '../layers/MouseLayer';
+import {SpriteLayer} from '../layers/SpriteLayer';
 import {CursorLayer} from '../layers/CursorLayer';
 import './Map.css';
 
 interface Props {
-  cellSize: number;
   width: number;
   height: number;
 }
 
-interface State {
-  painting: boolean;
-  hovered: Point | null;
-  painted: {[key: string]: {[key: string]: boolean}};
+interface PropsFromState {
+  selected?: null | {
+    sheet: string;
+    sprite: string;
+  };
+  layers: {
+    base: Layer;
+  };
 }
 
-export class Map extends React.Component<Props, State> {
-  /*
+interface PropsFromDispatch {
+  paintSprite: typeof paintSprite;
+}
+
+interface State {
+  mouseX: number;
+  mouseY: number;
+  isPainting: boolean;
+}
+
+class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDispatch, {}> {
   public state: State = {
-    painting: false,
-    hovered: null,
-    painted: {},
+    mouseX: -1,
+    mouseY: -1,
+    isPainting: false,
   };
 
-  private cellFromPos = (pos: Point): Point => {
-    return {
-      x: Math.floor(pos.x / this.props.cellSize),
-      y: Math.floor(pos.y / this.props.cellSize),
-    };
+  private handleMouseDown = (position: Point) => {
+    this.setState({isPainting: true});
   };
 
-  private getPaintedCells = (): Point[] => {
-    return Object.keys(this.state.painted).reduce((cells: Point[], xPos) => {
-      Object.keys(this.state.painted[xPos]).forEach(yPos => {
-        cells.push({x: parseInt(xPos, 10), y: parseInt(yPos, 10)});
-      });
-      return cells;
-    }, []);
+  private handleMouseUp = (position: Point) => {
+    this.setState({isPainting: false});
   };
 
-  private paintCell = (cell: Point) => {
-    this.setState(state => {
-      state.painted[cell.x] = state.painted[cell.x] || {};
-      state.painted[cell.x][cell.y] = true;
-      return state;
-    });
+  private handleMouseMove = (position: Point) => {
+    this.setState({mouseX: position.x, mouseY: position.y});
   };
 
-  private handleMouseMove = (pos: Point) => {
-    const {painting, hovered} = this.state;
-    const cell = this.cellFromPos(pos);
-    if (!hovered || (hovered && (hovered.x !== cell.x || hovered.y !== cell.y))) {
-      this.setState({
-        hovered: cell,
-      });
-      if (painting) {
-        this.paintCell(cell);
+  private handleMouseLeave = (position: Point) => {
+    this.setState({mouseX: -1, mouseY: -1});
+  };
+
+  private handleClick = (position: Point) => {
+    if (this.props.selected) {
+      const attrs = getSpriteAttrs(this.props.selected.sheet, this.props.selected.sprite);
+      if (attrs && attrs.w && attrs.h) {
+        this.props.paintSprite(
+          {
+            x: Math.floor(position.x / attrs.w) * attrs.w,
+            y: Math.floor(position.y / attrs.h) * attrs.h,
+          },
+          this.props.selected.sheet,
+          this.props.selected.sprite
+        );
       }
     }
   };
-  private handleMouseLeave = () => {
-    this.setState({hovered: null});
-  };
-
-  private handleMouseDown = (pos: Point) => {
-    const cell = this.cellFromPos(pos);
-    this.setState({painting: true});
-    this.paintCell(cell);
-  };
-
-  private handleMouseUp = (pos: Point) => {
-    const cell = this.cellFromPos(pos);
-    this.setState({painting: false});
-    this.paintCell(cell);
-  };
-  */
 
   public render() {
     return (
-      <div
-        className="map"
-        style={{
-          width: this.props.cellSize * this.props.width,
-          height: this.props.cellSize * this.props.height,
-        }}
-      >
-        <div className="layers">
-          <BaseLayer />
-          <CursorLayer />
+      <div className="map">
+        <div
+          className="layers"
+          style={{
+            width: this.props.width,
+            height: this.props.height,
+          }}
+        >
+          <SpriteLayer {...this.props.layers.base} />
+          <CursorLayer
+            selected={this.props.selected}
+            mouseX={this.state.mouseX}
+            mouseY={this.state.mouseY}
+          />
+          <MouseLayer
+            onMouseDown={this.handleMouseDown}
+            onMouseUp={this.handleMouseUp}
+            onMouseMove={this.handleMouseMove}
+            onMouseLeave={this.handleMouseLeave}
+            onClick={this.handleClick}
+          />
         </div>
       </div>
     );
   }
 }
+
+export const Map = connect(
+  (state: StoreState, props: Props) => {
+    return {
+      selected: selectedSelector(state, props),
+      layers: layersSelector(state, props),
+    };
+  },
+  {paintSprite}
+)(MapView);

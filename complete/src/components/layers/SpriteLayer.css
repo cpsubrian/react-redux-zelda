@@ -1,0 +1,7 @@
+.sprite-layer .sprite-layer-column {
+  position: absolute;
+  transform: translatez(0); /* Make each layer a Compisite Layer */
+}
+.sprite-layer .sprite {
+  position: absolute;
+}

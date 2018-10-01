@@ -1,0 +1,171 @@
+import * as _ from 'lodash';
+import {Tile} from '../types';
+
+export const tiles = [
+  {
+    symbol: '-',
+    type: 'grass',
+    sprite: 'overworld',
+    path: ['tiles', 'grass'],
+    hitbox: [0, 0, 16, 16],
+    decorations() {
+      let rand = Math.random();
+      if (rand > 0.95) {
+        return [
+          {
+            type: 'flower',
+            style: {
+              top: 3 + 5 * Math.random(),
+              left: 2 + 5 * Math.random(),
+              opacity: 0.3 + Math.random() * 0.4,
+              transform: 'scale(' + (0.5 + Math.random() * 0.5) + ')',
+            },
+          },
+        ];
+      } else if (rand > 0.9) {
+        return [
+          {
+            type: 'spot',
+            style: {
+              top: 3 + 5 * Math.random(),
+              left: 2 + 5 * Math.random(),
+              opacity: 0.5 + Math.random() * 0.5,
+            },
+          },
+        ];
+      } else {
+        return [];
+      }
+    },
+  },
+  {
+    symbol: 'l',
+    type: 'leaves',
+    sprite: 'overworld',
+    path: ['tiles', 'leaves'],
+    hitbox: [0, 0, 16, 16],
+  },
+  {
+    symbol: 'b',
+    type: 'bush',
+    sprite: 'overworld',
+    path: ['tiles', 'bush'],
+    solid: true,
+    destructable: true,
+    destructTo: 'leaves',
+    hitbox: [0, 0, 16, 16],
+  },
+  {
+    symbol: 'w',
+    type: 'water',
+    sprite: 'overworld',
+    path: ['tiles', 'water'],
+    solid: true,
+    hitbox: [0, 0, 16, 16],
+    decorations() {
+      let rand = Math.random();
+      if (rand > 0.92) {
+        return [
+          {
+            sprite: 'cliffsWater',
+            type: 'bubbles0',
+            style: {
+              top: 3 + 5 * Math.random(),
+              left: 2 + 5 * Math.random(),
+              opacity: 0.5 + Math.random() * 0.5,
+            },
+          },
+        ];
+      } else if (rand > 0.87) {
+        return [
+          {
+            sprite: 'cliffsWater',
+            type: 'bubbles1',
+            style: {
+              top: 3 + 5 * Math.random(),
+              left: 2 + 5 * Math.random(),
+              opacity: 0.5 + Math.random() * 0.5,
+            },
+          },
+        ];
+      } else if (rand > 0.82) {
+        return [
+          {
+            sprite: 'cliffsWater',
+            type: 'bubbles2',
+            style: {
+              top: 3 + 5 * Math.random(),
+              left: 2 + 5 * Math.random(),
+              opacity: 0.5 + Math.random() * 0.5,
+            },
+          },
+        ];
+      } else if (rand > 0.7) {
+        return [
+          {
+            sprite: 'cliffsWater',
+            type: 'bubbles3',
+            style: {
+              top: 3 + 5 * Math.random(),
+              left: 2 + 5 * Math.random(),
+              opacity: 0.5 + Math.random() * 0.5,
+            },
+          },
+        ];
+      } else {
+        return [];
+      }
+    },
+  },
+  {
+    symbol: 't',
+    type: 'tree-trunk',
+    sprite: 'overworld',
+    path: ['tiles', 'tree-trunk'],
+    solid: true,
+    hitbox: [-16, -16, 32, 32],
+  },
+  {
+    symbol: 'T',
+    type: 'tree',
+    sprite: 'overworld',
+    path: ['tiles', 'tree'],
+    solid: true,
+    hitbox: [-16, -16, 32, 32],
+  },
+];
+
+export const tileFromSymbol = (symbol: string) => {
+  return createTile(_.find(tiles, {symbol}));
+};
+
+export const tileFromType = (type: string) => {
+  return createTile(_.find(tiles, {type}));
+};
+
+const getDecorations = (tile: Tile) => {
+  if (tile.decorations) {
+    let decorations =
+      typeof tile.decorations === 'function' ? tile.decorations() : tile.decorations;
+    return decorations.map((decoration: Tile) => {
+      return Object.assign(
+        {},
+        {
+          sprite: tile.sprite,
+          path: tile.path.concat(['decorations', decoration.type]),
+        },
+        decoration
+      );
+    });
+  } else {
+    return null;
+  }
+};
+
+const createTile = (base: Tile) => {
+  let tile = _.omit(base, 'decorations');
+  if (base.decorations) {
+    tile.decorations = getDecorations(base);
+  }
+  return tile;
+};

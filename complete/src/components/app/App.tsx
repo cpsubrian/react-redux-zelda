@@ -1,19 +1,23 @@
 import * as React from 'react';
 import {Provider} from 'react-redux';
-import {store} from '../../redux/store';
-import {CELL_SIZE, MAP_WIDTH, MAP_HEIGHT} from '../../constants';
+import {store} from '../../data/store';
 import {Header} from '../header/Header';
 import {Map} from '../map/Map';
 import {Toolbar} from '../toolbar/Toolbar';
 import './App.css';
+
+const backgroundImageUrl: string = require('./background.jpg');
+const mapWidth = 16 * 32;
+const mapHeight = 16 * 24;
 
 export class App extends React.Component {
   public render() {
     return (
       <Provider store={store}>
         <div className="app">
+          <div className="background" style={{backgroundImage: `url(${backgroundImageUrl})`}} />
           <Header />
-          <Map cellSize={CELL_SIZE} width={MAP_WIDTH} height={MAP_HEIGHT} />
+          <Map width={mapWidth} height={mapHeight} />
           <Toolbar />
         </div>
       </Provider>

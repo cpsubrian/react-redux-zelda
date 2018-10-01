@@ -3,8 +3,5 @@
   "rules": {
     "i18n-string-param": true
   },
-
-  "rulesDirectory": [
-    "./tslint_rules"
-  ]
+  "rulesDirectory": ["./tslint_rules"]
 }
