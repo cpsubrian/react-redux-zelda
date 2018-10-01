@@ -4,6 +4,8 @@ import {getSpriteAttrs} from '../../sprites';
 import {Sprite} from '../sprite/Sprite';
 import './CursorLayer.css';
 
+const CELL_SIZE = 16;
+
 interface Props {
   mouseX: number;
   mouseY: number;
@@ -18,29 +20,23 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
     const {mouseX, mouseY, selected} = this.props;
     const withinMap = mouseX >= 0 && mouseY >= 0;
 
-    if (withinMap) {
-      let width = 16;
-      let height = 16;
-
+    if (withinMap && selected && selected.sheet && selected.sprite) {
       if (selected && selected.sheet && selected.sprite) {
         const spriteAttrs = getSpriteAttrs(selected.sheet, selected.sprite);
         if (spriteAttrs && spriteAttrs.w && spriteAttrs.h) {
-          width = spriteAttrs.w;
-          height = spriteAttrs.h;
+          return {
+            top: Math.floor(mouseY / CELL_SIZE) * CELL_SIZE,
+            left: Math.floor(mouseX / CELL_SIZE) * CELL_SIZE,
+            width: spriteAttrs.w,
+            height: spriteAttrs.h,
+          };
         }
       }
-
-      return {
-        top: Math.floor(mouseY / height) * height,
-        left: Math.floor(mouseX / width) * width,
-        width,
-        height,
-      };
-    } else {
-      return {
-        display: 'none',
-      };
     }
+
+    return {
+      display: 'none',
+    };
   }
   render() {
     return (

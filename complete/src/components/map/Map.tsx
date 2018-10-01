@@ -1,6 +1,8 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {connect} from 'react-redux';
-import {Layer, Point} from '../../types';
+import {Quadtree} from '../../lib/quadtree';
+import {Point, SpriteAttrs} from '../../types';
 import {StoreState} from '../../data/types';
 import {selectedSelector, layersSelector} from '../../data/selectors';
 import {paintSprite} from '../../data/action_creators';
@@ -9,6 +11,8 @@ import {MouseLayer} from '../layers/MouseLayer';
 import {SpriteLayer} from '../layers/SpriteLayer';
 import {CursorLayer} from '../layers/CursorLayer';
 import './Map.css';
+
+const CELL_SIZE = 16;
 
 interface Props {
   width: number;
@@ -20,9 +24,7 @@ interface PropsFromState {
     sheet: string;
     sprite: string;
   };
-  layers: {
-    base: Layer;
-  };
+  layers: StoreState['layers'];
 }
 
 interface PropsFromDispatch {
@@ -42,6 +44,67 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
     isPainting: false,
   };
 
+  private paintSprite(position: Point, sheet: string, sprite: string) {
+    const attrs = getSpriteAttrs(sheet, sprite);
+    if (attrs && attrs.w && attrs.h) {
+      // Normalize position to cells.
+      const pos = {
+        x: Math.floor(position.x / CELL_SIZE) * CELL_SIZE,
+        y: Math.floor(position.y / CELL_SIZE) * CELL_SIZE,
+      };
+
+      // Check for sprite collision and paint.
+      if (!this.hasCollision(attrs, pos)) {
+        this.props.paintSprite(attrs.layer!, pos, sheet, sprite);
+      }
+    }
+  }
+
+  private hasCollision = (attrs: SpriteAttrs, position: Point) => {
+    const bounds = {x: position.x, y: position.y, width: attrs.w!, height: attrs.h!};
+    const quadtree = this.createQuadtree(attrs.layer!);
+    const possible = quadtree.retrieve(bounds);
+
+    for (let check of possible) {
+      if (
+        bounds.x + bounds.width <= check.x ||
+        bounds.x >= check.x + check.width ||
+        bounds.y + bounds.height <= check.y ||
+        bounds.y >= check.y + check.height
+      ) {
+        continue;
+      } else {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  private createQuadtree = (layer: string) => {
+    const quadtree = new Quadtree(
+      {x: 0, y: 0, width: this.props.width, height: this.props.height},
+      5,
+      10
+    );
+    if (this.props.layers[layer]) {
+      _.each(this.props.layers[layer].columns, (col, x) => {
+        _.each(col.rows, (row, y) => {
+          const rowAttrs = getSpriteAttrs(row.sheet, row.sprite);
+          if (rowAttrs) {
+            quadtree.insert({
+              x: parseInt(x, 10),
+              y: parseInt(y, 10),
+              width: rowAttrs.w,
+              height: rowAttrs.h,
+            });
+          }
+        });
+      });
+    }
+    return quadtree;
+  };
+
   private handleMouseDown = (position: Point) => {
     this.setState({isPainting: true});
   };
@@ -52,6 +115,10 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
 
   private handleMouseMove = (position: Point) => {
     this.setState({mouseX: position.x, mouseY: position.y});
+    if (this.state.isPainting && this.props.selected) {
+      const {sheet, sprite} = this.props.selected;
+      this.paintSprite(position, sheet, sprite);
+    }
   };
 
   private handleMouseLeave = (position: Point) => {
@@ -60,17 +127,8 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
 
   private handleClick = (position: Point) => {
     if (this.props.selected) {
-      const attrs = getSpriteAttrs(this.props.selected.sheet, this.props.selected.sprite);
-      if (attrs && attrs.w && attrs.h) {
-        this.props.paintSprite(
-          {
-            x: Math.floor(position.x / attrs.w) * attrs.w,
-            y: Math.floor(position.y / attrs.h) * attrs.h,
-          },
-          this.props.selected.sheet,
-          this.props.selected.sprite
-        );
-      }
+      const {sheet, sprite} = this.props.selected;
+      this.paintSprite(position, sheet, sprite);
     }
   };
 
@@ -85,6 +143,8 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
           }}
         >
           <SpriteLayer {...this.props.layers.base} />
+          <SpriteLayer {...this.props.layers.decorations} />
+          <SpriteLayer {...this.props.layers.objects} />
           <CursorLayer
             selected={this.props.selected}
             mouseX={this.state.mouseX}

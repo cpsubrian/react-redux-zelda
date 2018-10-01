@@ -20,12 +20,21 @@ interface PropsFromDispatch {
 }
 
 class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}> {
-  private handleClickSprite = (sheet: string, sprite: string) => {
-    if (this.isSelected(sheet, sprite)) {
-      this.props.unselectSprite();
-    } else {
-      this.props.selectSprite(sheet, sprite);
+  private layerClickHandlers: {
+    [key: string]: (sheet: string, sprite: string) => void;
+  } = {};
+
+  private handleClickSprite = (layer: string) => {
+    if (!this.layerClickHandlers[layer]) {
+      this.layerClickHandlers[layer] = (sheet: string, sprite: string) => {
+        if (this.isSelected(sheet, sprite)) {
+          this.props.unselectSprite();
+        } else {
+          this.props.selectSprite(sheet, sprite);
+        }
+      };
     }
+    return this.layerClickHandlers[layer];
   };
 
   private isSelected(sheet: string, sprite: string) {
@@ -44,7 +53,19 @@ class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}
             className={cx({selected: this.isSelected('overworld', 'grass')})}
             sheet="overworld"
             sprite="grass"
-            onClick={this.handleClickSprite}
+            onClick={this.handleClickSprite('base')}
+          />
+          <Sprite
+            className={cx({selected: this.isSelected('overworld', 'tree_trunk')})}
+            sheet="overworld"
+            sprite="tree_trunk"
+            onClick={this.handleClickSprite('objects')}
+          />
+          <Sprite
+            className={cx({selected: this.isSelected('overworld', 'tree')})}
+            sheet="overworld"
+            sprite="tree"
+            onClick={this.handleClickSprite('objects')}
           />
         </div>
       </div>

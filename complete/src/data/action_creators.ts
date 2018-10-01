@@ -17,12 +17,14 @@ export const unselectSprite = (): Actions.UnselectSprite => {
 };
 
 export const paintSprite = (
+  layer: string,
   position: Point,
   sheet: string,
   sprite: string
 ): Actions.PaintSprite => {
   return {
     type: ActionTypes.PAINT_SPRITE,
+    layer,
     position,
     sheet,
     sprite,

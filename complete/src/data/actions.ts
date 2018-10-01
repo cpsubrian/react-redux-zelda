@@ -14,6 +14,7 @@ export interface UnselectSprite extends Action {
 
 export interface PaintSprite extends Action {
   type: ActionTypes.PAINT_SPRITE;
+  layer: string;
   position: Point;
   sheet: string;
   sprite: string;

@@ -10,6 +10,14 @@ const initialState: Readonly<StoreState> = {
       name: 'base',
       columns: {},
     },
+    decorations: {
+      name: 'decorations',
+      columns: {},
+    },
+    objects: {
+      name: 'objects',
+      columns: {},
+    },
   },
 };
 
@@ -31,21 +39,21 @@ const handlers: ActionHandlers = {
     };
   },
   [ActionTypes.PAINT_SPRITE]: (state, action: Actions.PaintSprite) => {
-    const {position, sheet, sprite} = action;
+    const {layer, position, sheet, sprite} = action;
     const {x, y} = position;
     return {
       ...state,
       layers: {
         ...state.layers,
-        base: {
-          ...state.layers.base,
+        [layer]: {
+          ...state.layers[layer],
           columns: {
-            ...state.layers.base.columns,
+            ...state.layers[layer].columns,
             [x]: {
-              ...(state.layers.base.columns[x] || {}),
+              ...(state.layers[layer].columns[x] || {}),
               updated: Date.now(),
               rows: {
-                ...(state.layers.base.columns[x] ? state.layers.base.columns[x].rows : {}),
+                ...(state.layers[layer].columns[x] ? state.layers[layer].columns[x].rows : {}),
                 [y]: {
                   sheet,
                   sprite,

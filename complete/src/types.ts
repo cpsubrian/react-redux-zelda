@@ -31,6 +31,7 @@ export interface SpriteSheet {
 
 export interface SpriteAttrs {
   className?: string;
+  layer?: string;
   w?: number;
   h?: number;
 }

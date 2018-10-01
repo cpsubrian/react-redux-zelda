@@ -9,7 +9,7 @@ export interface StoreState {
     sprite: string;
   }>;
   layers: {
-    base: Layer;
+    [key: string]: Layer;
   };
 }
 
