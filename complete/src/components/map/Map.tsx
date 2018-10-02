@@ -1,16 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import {connect} from 'react-redux';
-import {Bounds, Point, StoreState} from '../../types';
+import {Bounds, Point, StoreState, LayerName} from '../../types';
+import {getCollisions} from '../../lib/collisions';
 import {idgen} from '../../lib/idgen';
-import {Quadtree} from '../../lib/quadtree';
 import {selectedTileTypeSelector, layersSelector} from '../../data/selectors';
 import {tiles} from '../../tiles';
-import {paintTile} from '../../data/action_creators';
+import {paintTile, eraseTile} from '../../data/action_creators';
 import {MouseLayer} from '../layers/MouseLayer';
 import {TilesLayer} from '../layers/TilesLayer';
 import {CursorLayer} from '../layers/CursorLayer';
 import './Map.css';
+
+const LAYERS: Array<LayerName> = ['terrain', 'objects'];
 
 interface Props {
   width: number;
@@ -25,6 +27,7 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   paintTile: typeof paintTile;
+  eraseTile: typeof eraseTile;
 }
 
 interface State {
@@ -43,54 +46,29 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
   private paintTile(type: string, position: Point) {
     const {cellSize} = this.props;
     const tile = tiles[type];
+    const snapSize =
+      tile.size[0] < cellSize ? tile.size[0] : tile.size[1] < cellSize ? tile.size[1] : cellSize;
 
-    // Create normalized bounds.
+    // Create bounds, normalized to our 'snap size'.
     const bounds: Bounds = {
-      x: Math.floor(position.x / cellSize) * cellSize,
-      y: Math.floor(position.y / cellSize) * cellSize,
+      x: Math.floor(position.x / snapSize) * snapSize,
+      y: Math.floor(position.y / snapSize) * snapSize,
       width: tile.size[0],
       height: tile.size[1],
     };
 
-    // Check for sprite collision and paint.
-    if (!this.getCollision(tile.layer, bounds)) {
-      this.props.paintTile(tile.layer, idgen(), tile.type, bounds);
-    }
-  }
-
-  private getCollision = (layer: string, bounds: Bounds): Bounds | null => {
-    const quadtree = this.createQuadtree(layer);
-    const possible = quadtree.retrieve(bounds);
-
-    for (let check of possible) {
-      if (
-        bounds.x + bounds.width <= check.x ||
-        bounds.x >= check.x + check.width ||
-        bounds.y + bounds.height <= check.y ||
-        bounds.y >= check.y + check.height
-      ) {
-        continue;
-      } else {
-        return check;
-      }
-    }
-
-    return null;
-  };
-
-  private createQuadtree = (layer: string) => {
-    const quadtree = new Quadtree(
-      {x: 0, y: 0, width: this.props.width, height: this.props.height},
-      5,
-      10
-    );
-    if (this.props.layers[layer]) {
-      _.each(this.props.layers[layer].tiles, ({bounds, id, tile}) => {
-        quadtree.insert({...bounds, id, tile});
+    // Check for sprite collisions in same or higher layers.
+    const level = LAYERS.indexOf(tile.layer);
+    for (let i = level; i < LAYERS.length; i++) {
+      const layer = this.props.layers[LAYERS[i]];
+      getCollisions(layer.tiles, bounds).forEach(({id}) => {
+        this.props.eraseTile(LAYERS[i], id);
       });
     }
-    return quadtree;
-  };
+
+    // Paint the new tile.
+    this.props.paintTile(tile.layer, idgen(), tile.type, bounds);
+  }
 
   private handleMouseDown = (position: Point) => {
     this.setState({isPainting: true});
@@ -117,16 +95,7 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
     // If we have a sprite selected, paint it.
     if (this.props.selectedTileType) {
       this.paintTile(this.props.selectedTileType, position);
-      return;
     }
-
-    // Otherwise, try to select a sprite under the cursor.
-    ['objects', 'decorations', 'base'].forEach(layer => {
-      const bounds = this.getCollision(layer, {...position, width: 1, height: 1});
-      if (bounds) {
-        // Select the sprite.
-      }
-    });
   };
 
   public render() {
@@ -139,8 +108,7 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
             height: this.props.height,
           }}
         >
-          <TilesLayer {...this.props.layers.base} />
-          <TilesLayer {...this.props.layers.decorations} />
+          <TilesLayer {...this.props.layers.terrain} />
           <TilesLayer {...this.props.layers.objects} />
           <CursorLayer
             cellSize={this.props.cellSize}
@@ -168,5 +136,5 @@ export const Map = connect(
       layers: layersSelector(state, props),
     };
   },
-  {paintTile}
+  {paintTile, eraseTile}
 )(MapView);

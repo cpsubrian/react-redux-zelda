@@ -22,13 +22,17 @@ export type Size = [number, number];
  * Tile & Sprite Typings
  */
 
+export type LayerName = 'terrain' | 'objects';
+
 export interface Layer {
-  name: string;
-  tiles: ReadonlyArray<{
-    id: string;
-    tile: Tile['type'];
-    bounds: Bounds;
-  }>;
+  name: LayerName;
+  tiles: ReadonlyArray<LayerTile>;
+}
+
+export interface LayerTile {
+  id: string;
+  tile: Tile['type'];
+  bounds: Bounds;
 }
 
 export interface TileSet {
@@ -37,14 +41,33 @@ export interface TileSet {
 
 export interface Tile {
   type: string;
-  layer: string;
+  layer: LayerName;
   size: Size;
   sprite: SpriteKey;
+  edges?: {
+    [type: string]: {
+      [direction: string]: SpriteKey;
+    };
+  };
+}
+
+export interface TileEdges {
+  n?: string;
+  s?: string;
+  e?: string;
+  w?: string;
+  ne?: string;
+  nw?: string;
+  se?: string;
+  sw?: string;
+  naw?: string;
+  nae?: string;
+  saw?: string;
+  sae?: string;
 }
 
 export interface SpriteSheet {
   name: string;
-  url: string;
   sprites: {
     [name: string]: SpriteAttrs;
   };
@@ -67,9 +90,7 @@ export interface SpriteKey {
 // All nested objects and arrays should be readonly so we can enforce compile-time immutability.
 export interface StoreState {
   selectedTileType: Tile['type'] | null;
-  layers: {
-    [name: string]: Layer;
-  };
+  layers: {[K in LayerName]: Layer};
 }
 
 // Mapping of 'action handlers' (sub-reducers).
@@ -82,4 +103,5 @@ export const enum ActionTypes {
   SELECT_TILE_TYPE = 'SELECT_TILE_TYPE',
   UNSELECT_TILE_TYPE = 'UNSELECT_TILE_TYPE',
   PAINT_TILE = 'PAINT_TILE',
+  ERASE_TILE = 'ERASE_TILE',
 }

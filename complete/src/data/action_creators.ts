@@ -1,4 +1,4 @@
-import {Bounds, ActionTypes} from '../types';
+import {Bounds, ActionTypes, LayerName} from '../types';
 import * as Actions from './actions';
 
 export const selectTileType = (tile: string): Actions.SelectTileType => {
@@ -15,7 +15,7 @@ export const unselectTileType = (): Actions.UnselectTileType => {
 };
 
 export const paintTile = (
-  layer: string,
+  layer: LayerName,
   id: string,
   tile: string,
   bounds: Bounds
@@ -26,5 +26,13 @@ export const paintTile = (
     id,
     tile,
     bounds,
+  };
+};
+
+export const eraseTile = (layer: LayerName, id: string): Actions.EraseTile => {
+  return {
+    type: ActionTypes.ERASE_TILE,
+    layer,
+    id,
   };
 };

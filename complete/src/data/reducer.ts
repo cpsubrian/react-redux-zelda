@@ -6,12 +6,8 @@ import * as Actions from './actions';
 const initialState: Readonly<StoreState> = {
   selectedTileType: null,
   layers: {
-    base: {
-      name: 'base',
-      tiles: [],
-    },
-    decorations: {
-      name: 'decorations',
+    terrain: {
+      name: 'terrain',
       tiles: [],
     },
     objects: {
@@ -47,6 +43,25 @@ const handlers: ActionHandlers = {
         },
       },
     };
+  },
+  [ActionTypes.ERASE_TILE]: (state, action: Actions.PaintTile) => {
+    const {layer, id} = action;
+    const index = state.layers[layer].tiles.findIndex(tile => tile.id === id);
+    return index >= 0
+      ? {
+          ...state,
+          layers: {
+            ...state.layers,
+            [layer]: {
+              ...state.layers[layer],
+              tiles: [
+                ...state.layers[layer].tiles.slice(0, index),
+                ...state.layers[layer].tiles.slice(index + 1),
+              ],
+            },
+          },
+        }
+      : state;
   },
 };
 

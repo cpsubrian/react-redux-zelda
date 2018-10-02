@@ -1,5 +1,5 @@
 import {Action} from 'redux';
-import {Bounds, ActionTypes} from '../types';
+import {Bounds, ActionTypes, LayerName} from '../types';
 
 export interface SelectTileType extends Action {
   type: ActionTypes.SELECT_TILE_TYPE;
@@ -12,8 +12,14 @@ export interface UnselectTileType extends Action {
 
 export interface PaintTile extends Action {
   type: ActionTypes.PAINT_TILE;
-  layer: string;
+  layer: LayerName;
   id: string;
   tile: string;
   bounds: Bounds;
+}
+
+export interface EraseTile extends Action {
+  type: ActionTypes.ERASE_TILE;
+  layer: LayerName;
+  id: string;
 }

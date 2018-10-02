@@ -18,9 +18,11 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
 
     if (withinMap && selectedTileType) {
       const tile = tiles[selectedTileType];
+      const snapSize =
+        tile.size[0] < cellSize ? tile.size[0] : tile.size[1] < cellSize ? tile.size[1] : cellSize;
       return {
-        top: Math.floor(mouseY / cellSize) * cellSize,
-        left: Math.floor(mouseX / cellSize) * cellSize,
+        top: Math.floor(mouseY / snapSize) * snapSize,
+        left: Math.floor(mouseX / snapSize) * snapSize,
         width: tile.size[0],
         height: tile.size[0],
       };

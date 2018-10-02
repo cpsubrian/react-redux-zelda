@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import {connect} from 'react-redux';
+import {tiles} from '../../tiles';
 import {StoreState} from '../../types';
 import {selectTileType, unselectTileType} from '../../data/action_creators';
 import {selectedTileTypeSelector} from '../../data/selectors';
@@ -42,21 +43,14 @@ class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}
     return (
       <div className="toolbar">
         <div className="tiles">
-          <Tile
-            className={cx({selected: this.isSelected('grass')})}
-            type="grass"
-            onClick={this.handleClickTile('base')}
-          />
-          <Tile
-            className={cx({selected: this.isSelected('tree_trunk')})}
-            type="tree_trunk"
-            onClick={this.handleClickTile('objects')}
-          />
-          <Tile
-            className={cx({selected: this.isSelected('tree')})}
-            type="tree"
-            onClick={this.handleClickTile('objects')}
-          />
+          {Object.keys(tiles).map(tile => (
+            <Tile
+              key={tile}
+              className={cx({selected: this.isSelected(tile)})}
+              type={tile}
+              onClick={this.handleClickTile(tile)}
+            />
+          ))}
         </div>
       </div>
     );
