@@ -1,32 +1,30 @@
-import {Point} from '../types';
-import {ActionTypes} from './types';
+import {Bounds, ActionTypes} from '../types';
 import * as Actions from './actions';
 
-export const selectSprite = (sheet: string, sprite: string): Actions.SelectSprite => {
+export const selectTileType = (tile: string): Actions.SelectTileType => {
   return {
-    type: ActionTypes.SELECT_SPRITE,
-    sheet,
-    sprite,
+    type: ActionTypes.SELECT_TILE_TYPE,
+    tile,
   };
 };
 
-export const unselectSprite = (): Actions.UnselectSprite => {
+export const unselectTileType = (): Actions.UnselectTileType => {
   return {
-    type: ActionTypes.UNSELECT_SPRITE,
+    type: ActionTypes.UNSELECT_TILE_TYPE,
   };
 };
 
-export const paintSprite = (
+export const paintTile = (
   layer: string,
-  position: Point,
-  sheet: string,
-  sprite: string
-): Actions.PaintSprite => {
+  id: string,
+  tile: string,
+  bounds: Bounds
+): Actions.PaintTile => {
   return {
-    type: ActionTypes.PAINT_SPRITE,
+    type: ActionTypes.PAINT_TILE,
     layer,
-    position,
-    sheet,
-    sprite,
+    id,
+    tile,
+    bounds,
   };
 };

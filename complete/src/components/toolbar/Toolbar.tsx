@@ -1,71 +1,61 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import {connect} from 'react-redux';
-import {createSelector} from 'reselect';
-import {selectSprite, unselectSprite} from '../../data/action_creators';
-import {selectedSelector} from '../../data/selectors';
-import {Sprite} from '../sprite/Sprite';
+import {StoreState} from '../../types';
+import {selectTileType, unselectTileType} from '../../data/action_creators';
+import {selectedTileTypeSelector} from '../../data/selectors';
+import {Tile} from '../tile/Tile';
 import './Toolbar.css';
 
 interface PropsFromState {
-  selected?: null | {
-    sheet: string;
-    sprite: string;
-  };
+  selectedTileType: string;
 }
 
 interface PropsFromDispatch {
-  selectSprite: typeof selectSprite;
-  unselectSprite: typeof unselectSprite;
+  selectTileType: typeof selectTileType;
+  unselectTileType: typeof unselectTileType;
 }
 
 class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}> {
   private layerClickHandlers: {
-    [key: string]: (sheet: string, sprite: string) => void;
+    [layerName: string]: (tileType: string) => void;
   } = {};
 
-  private handleClickSprite = (layer: string) => {
+  private handleClickTile = (layer: string) => {
     if (!this.layerClickHandlers[layer]) {
-      this.layerClickHandlers[layer] = (sheet: string, sprite: string) => {
-        if (this.isSelected(sheet, sprite)) {
-          this.props.unselectSprite();
+      this.layerClickHandlers[layer] = tileType => {
+        if (this.isSelected(tileType)) {
+          this.props.unselectTileType();
         } else {
-          this.props.selectSprite(sheet, sprite);
+          this.props.selectTileType(tileType);
         }
       };
     }
     return this.layerClickHandlers[layer];
   };
 
-  private isSelected(sheet: string, sprite: string) {
-    return (
-      this.props.selected &&
-      this.props.selected.sheet === sheet &&
-      this.props.selected.sprite === sprite
-    );
+  private isSelected(tileType: string) {
+    return this.props.selectedTileType && this.props.selectedTileType === tileType;
   }
 
   render() {
     return (
       <div className="toolbar">
-        <div className="base-tiles">
-          <Sprite
-            className={cx({selected: this.isSelected('overworld', 'grass')})}
-            sheet="overworld"
-            sprite="grass"
-            onClick={this.handleClickSprite('base')}
+        <div className="tiles">
+          <Tile
+            className={cx({selected: this.isSelected('grass')})}
+            type="grass"
+            onClick={this.handleClickTile('base')}
           />
-          <Sprite
-            className={cx({selected: this.isSelected('overworld', 'tree_trunk')})}
-            sheet="overworld"
-            sprite="tree_trunk"
-            onClick={this.handleClickSprite('objects')}
+          <Tile
+            className={cx({selected: this.isSelected('tree_trunk')})}
+            type="tree_trunk"
+            onClick={this.handleClickTile('objects')}
           />
-          <Sprite
-            className={cx({selected: this.isSelected('overworld', 'tree')})}
-            sheet="overworld"
-            sprite="tree"
-            onClick={this.handleClickSprite('objects')}
+          <Tile
+            className={cx({selected: this.isSelected('tree')})}
+            type="tree"
+            onClick={this.handleClickTile('objects')}
           />
         </div>
       </div>
@@ -74,6 +64,10 @@ class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}
 }
 
 export const Toolbar = connect(
-  createSelector(selectedSelector, selected => ({selected})),
-  {selectSprite, unselectSprite}
+  (state: StoreState, props: {}) => {
+    return {
+      selectedTileType: selectedTileTypeSelector(state, props),
+    };
+  },
+  {selectTileType, unselectTileType}
 )(ToolbarView);

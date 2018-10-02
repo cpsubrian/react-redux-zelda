@@ -1,21 +1,19 @@
 import {Action} from 'redux';
-import {ActionTypes} from './types';
-import {Point} from '../types';
+import {Bounds, ActionTypes} from '../types';
 
-export interface SelectSprite extends Action {
-  type: ActionTypes.SELECT_SPRITE;
-  sheet: string;
-  sprite: string;
+export interface SelectTileType extends Action {
+  type: ActionTypes.SELECT_TILE_TYPE;
+  tile: string;
 }
 
-export interface UnselectSprite extends Action {
-  type: ActionTypes.UNSELECT_SPRITE;
+export interface UnselectTileType extends Action {
+  type: ActionTypes.UNSELECT_TILE_TYPE;
 }
 
-export interface PaintSprite extends Action {
-  type: ActionTypes.PAINT_SPRITE;
+export interface PaintTile extends Action {
+  type: ActionTypes.PAINT_TILE;
   layer: string;
-  position: Point;
-  sheet: string;
-  sprite: string;
+  id: string;
+  tile: string;
+  bounds: Bounds;
 }

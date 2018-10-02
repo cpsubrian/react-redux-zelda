@@ -1,66 +1,49 @@
 import {AnyAction} from 'redux';
-import {StoreState, ActionHandlers, ActionTypes} from './types';
+import {StoreState, ActionHandlers, ActionTypes} from '../types';
 import * as Actions from './actions';
 
 // Initial redux store state.
 const initialState: Readonly<StoreState> = {
-  selected: null,
+  selectedTileType: null,
   layers: {
     base: {
       name: 'base',
-      columns: {},
+      tiles: [],
     },
     decorations: {
       name: 'decorations',
-      columns: {},
+      tiles: [],
     },
     objects: {
       name: 'objects',
-      columns: {},
+      tiles: [],
     },
   },
 };
 
 // Redux reducer action handlers.
 const handlers: ActionHandlers = {
-  [ActionTypes.SELECT_SPRITE]: (state, action: Actions.SelectSprite) => {
+  [ActionTypes.SELECT_TILE_TYPE]: (state, action: Actions.SelectTileType) => {
     return {
       ...state,
-      selected: {
-        sheet: action.sheet,
-        sprite: action.sprite,
-      },
+      selectedTileType: action.tile,
     };
   },
-  [ActionTypes.UNSELECT_SPRITE]: (state, action: Actions.UnselectSprite) => {
+  [ActionTypes.UNSELECT_TILE_TYPE]: (state, action: Actions.UnselectTileType) => {
     return {
       ...state,
-      selected: null,
+      selectedTileType: null,
     };
   },
-  [ActionTypes.PAINT_SPRITE]: (state, action: Actions.PaintSprite) => {
-    const {layer, position, sheet, sprite} = action;
-    const {x, y} = position;
+  [ActionTypes.PAINT_TILE]: (state, action: Actions.PaintTile) => {
+    const {layer, id, tile, bounds} = action;
     return {
       ...state,
       layers: {
         ...state.layers,
         [layer]: {
           ...state.layers[layer],
-          columns: {
-            ...state.layers[layer].columns,
-            [x]: {
-              ...(state.layers[layer].columns[x] || {}),
-              updated: Date.now(),
-              rows: {
-                ...(state.layers[layer].columns[x] ? state.layers[layer].columns[x].rows : {}),
-                [y]: {
-                  sheet,
-                  sprite,
-                },
-              },
-            },
-          },
+          tiles: [...state.layers[layer].tiles, {id, tile, bounds}],
         },
       },
     };

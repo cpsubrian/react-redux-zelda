@@ -1,34 +1,30 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import {connect} from 'react-redux';
+import {Bounds, Point, StoreState} from '../../types';
+import {idgen} from '../../lib/idgen';
 import {Quadtree} from '../../lib/quadtree';
-import {Point, SpriteAttrs} from '../../types';
-import {StoreState} from '../../data/types';
-import {selectedSelector, layersSelector} from '../../data/selectors';
-import {paintSprite} from '../../data/action_creators';
-import {getSpriteAttrs} from '../../sprites';
+import {selectedTileTypeSelector, layersSelector} from '../../data/selectors';
+import {tiles} from '../../tiles';
+import {paintTile} from '../../data/action_creators';
 import {MouseLayer} from '../layers/MouseLayer';
-import {SpriteLayer} from '../layers/SpriteLayer';
+import {TilesLayer} from '../layers/TilesLayer';
 import {CursorLayer} from '../layers/CursorLayer';
 import './Map.css';
-
-const CELL_SIZE = 16;
 
 interface Props {
   width: number;
   height: number;
+  cellSize: number;
 }
 
 interface PropsFromState {
-  selected?: null | {
-    sheet: string;
-    sprite: string;
-  };
+  selectedTileType: StoreState['selectedTileType'];
   layers: StoreState['layers'];
 }
 
 interface PropsFromDispatch {
-  paintSprite: typeof paintSprite;
+  paintTile: typeof paintTile;
 }
 
 interface State {
@@ -44,25 +40,26 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
     isPainting: false,
   };
 
-  private paintSprite(position: Point, sheet: string, sprite: string) {
-    const attrs = getSpriteAttrs(sheet, sprite);
-    if (attrs && attrs.w && attrs.h) {
-      // Normalize position to cells.
-      const pos = {
-        x: Math.floor(position.x / CELL_SIZE) * CELL_SIZE,
-        y: Math.floor(position.y / CELL_SIZE) * CELL_SIZE,
-      };
+  private paintTile(type: string, position: Point) {
+    const {cellSize} = this.props;
+    const tile = tiles[type];
 
-      // Check for sprite collision and paint.
-      if (!this.hasCollision(attrs, pos)) {
-        this.props.paintSprite(attrs.layer!, pos, sheet, sprite);
-      }
+    // Create normalized bounds.
+    const bounds: Bounds = {
+      x: Math.floor(position.x / cellSize) * cellSize,
+      y: Math.floor(position.y / cellSize) * cellSize,
+      width: tile.size[0],
+      height: tile.size[1],
+    };
+
+    // Check for sprite collision and paint.
+    if (!this.getCollision(tile.layer, bounds)) {
+      this.props.paintTile(tile.layer, idgen(), tile.type, bounds);
     }
   }
 
-  private hasCollision = (attrs: SpriteAttrs, position: Point) => {
-    const bounds = {x: position.x, y: position.y, width: attrs.w!, height: attrs.h!};
-    const quadtree = this.createQuadtree(attrs.layer!);
+  private getCollision = (layer: string, bounds: Bounds): Bounds | null => {
+    const quadtree = this.createQuadtree(layer);
     const possible = quadtree.retrieve(bounds);
 
     for (let check of possible) {
@@ -74,11 +71,11 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
       ) {
         continue;
       } else {
-        return true;
+        return check;
       }
     }
 
-    return false;
+    return null;
   };
 
   private createQuadtree = (layer: string) => {
@@ -88,18 +85,8 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
       10
     );
     if (this.props.layers[layer]) {
-      _.each(this.props.layers[layer].columns, (col, x) => {
-        _.each(col.rows, (row, y) => {
-          const rowAttrs = getSpriteAttrs(row.sheet, row.sprite);
-          if (rowAttrs) {
-            quadtree.insert({
-              x: parseInt(x, 10),
-              y: parseInt(y, 10),
-              width: rowAttrs.w,
-              height: rowAttrs.h,
-            });
-          }
-        });
+      _.each(this.props.layers[layer].tiles, ({bounds, id, tile}) => {
+        quadtree.insert({...bounds, id, tile});
       });
     }
     return quadtree;
@@ -115,9 +102,10 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
 
   private handleMouseMove = (position: Point) => {
     this.setState({mouseX: position.x, mouseY: position.y});
-    if (this.state.isPainting && this.props.selected) {
-      const {sheet, sprite} = this.props.selected;
-      this.paintSprite(position, sheet, sprite);
+
+    // If we're painting, then paint the sprite.
+    if (this.state.isPainting && this.props.selectedTileType) {
+      this.paintTile(this.props.selectedTileType, position);
     }
   };
 
@@ -126,10 +114,19 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
   };
 
   private handleClick = (position: Point) => {
-    if (this.props.selected) {
-      const {sheet, sprite} = this.props.selected;
-      this.paintSprite(position, sheet, sprite);
+    // If we have a sprite selected, paint it.
+    if (this.props.selectedTileType) {
+      this.paintTile(this.props.selectedTileType, position);
+      return;
     }
+
+    // Otherwise, try to select a sprite under the cursor.
+    ['objects', 'decorations', 'base'].forEach(layer => {
+      const bounds = this.getCollision(layer, {...position, width: 1, height: 1});
+      if (bounds) {
+        // Select the sprite.
+      }
+    });
   };
 
   public render() {
@@ -142,11 +139,12 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
             height: this.props.height,
           }}
         >
-          <SpriteLayer {...this.props.layers.base} />
-          <SpriteLayer {...this.props.layers.decorations} />
-          <SpriteLayer {...this.props.layers.objects} />
+          <TilesLayer {...this.props.layers.base} />
+          <TilesLayer {...this.props.layers.decorations} />
+          <TilesLayer {...this.props.layers.objects} />
           <CursorLayer
-            selected={this.props.selected}
+            cellSize={this.props.cellSize}
+            selectedTileType={this.props.selectedTileType}
             mouseX={this.state.mouseX}
             mouseY={this.state.mouseY}
           />
@@ -166,9 +164,9 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
 export const Map = connect(
   (state: StoreState, props: Props) => {
     return {
-      selected: selectedSelector(state, props),
+      selectedTileType: selectedTileTypeSelector(state, props),
       layers: layersSelector(state, props),
     };
   },
-  {paintSprite}
+  {paintTile}
 )(MapView);

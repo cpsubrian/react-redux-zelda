@@ -8,15 +8,9 @@ interface Props {
   style?: React.CSSProperties;
   sheet: string;
   sprite: string;
-  onClick?: (sheet: string, sprite: string) => void;
 }
 
 export class Sprite extends React.PureComponent<Props, {}> {
-  private handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (this.props.onClick) {
-      this.props.onClick(this.props.sheet, this.props.sprite);
-    }
-  };
   private getSpriteStyles = () => {
     const spriteSheet = sprites[this.props.sheet];
     return {
@@ -35,7 +29,6 @@ export class Sprite extends React.PureComponent<Props, {}> {
           this.props.className
         )}
         style={this.getSpriteStyles()}
-        onClick={this.props.onClick ? this.handleClick : undefined}
       />
     );
   }

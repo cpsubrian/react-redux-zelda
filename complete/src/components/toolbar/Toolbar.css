@@ -1,25 +1,26 @@
 .toolbar {
+  margin: 8px;
   flex: 0 0 auto;
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 120px;
+  flex-direction: column;
   background: #222;
   border-top: 1px solid #666;
   box-shadow: 0 -5px 5px rgba(0, 0, 0, 0.15);
 }
-.toolbar .base-tiles {
+.toolbar .tiles {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: flex-start;
 }
-.toolbar .sprite {
+.toolbar .tile {
+  flex: 0 0 auto;
   margin: 8px;
   border: 1px solid transparent;
 }
-.toolbar .sprite:hover {
+.toolbar .tile:hover {
   border: 1px solid rgba(255, 255, 255, 0.5);
   cursor: pointer;
 }
-.toolbar .sprite.selected {
+.toolbar .tile.selected {
   border: 1px solid rgba(255, 255, 255, 0.9);
 }

@@ -1,9 +1,9 @@
-import {StoreState} from './types';
+import {StoreState} from '../types';
 import {createSelector} from 'reselect';
 
-export const selectedSelector = createSelector(
-  (state: StoreState, props: {}) => state.selected,
-  selected => selected
+export const selectedTileTypeSelector = createSelector(
+  (state: StoreState, props: {}) => state.selectedTileType,
+  selectedTileType => selectedTileType
 );
 
 export const layersSelector = createSelector(
