@@ -1,0 +1,6 @@
+.tiles-layer {
+  position: relative;
+}
+.tiles-layer .tile {
+  position: absolute;
+}

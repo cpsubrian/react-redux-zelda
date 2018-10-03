@@ -4,5 +4,6 @@
     "./tslint_warning.json",
     "./tslint_error.json",
     "./tslint_autofix.json"
-  ]
+  ],
+  "rulesDirectory": ["./tslint_rules"]
 }
