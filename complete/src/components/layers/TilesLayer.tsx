@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {getEdges} from '../../lib/collisions';
 import {Layer} from '../../types';
 import {Tile} from '../tile/Tile';
 import './TilesLayer.css';
@@ -14,12 +13,14 @@ export class TilesLayer extends React.PureComponent<Props, {}> {
   render() {
     return (
       <div className={`layer tiles-layer tiles-layer--${this.props.name}`}>
-        {_.map(this.props.tiles, ({id, tile, bounds}) => (
+        {_.map(this.props.tiles, ({id, tile, bounds, edges, updated}) => (
           <Tile
             key={id}
+            id={id}
             style={{top: bounds.y, left: bounds.x}}
             type={tile}
-            edges={getEdges(this.props.tiles, id, bounds)}
+            edges={edges}
+            updated={updated}
           />
         ))}
       </div>

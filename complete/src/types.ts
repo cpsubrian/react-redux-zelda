@@ -31,8 +31,10 @@ export interface Layer {
 
 export interface LayerTile {
   id: string;
-  tile: Tile['type'];
+  tile: string;
   bounds: Bounds;
+  edges: TileEdges;
+  updated: number;
 }
 
 export interface TileSet {
@@ -93,10 +95,10 @@ export interface StoreState {
   layers: {[K in LayerName]: Layer};
 }
 
-// Mapping of 'action handlers' (sub-reducers).
-export interface ActionHandlers {
-  [key: string]: (state: StoreState, action: AnyAction) => StoreState;
-}
+// Mapping of 'action handlers'.
+export type ActionHandlers = {
+  [A in ActionTypes]: (state: StoreState, action: AnyAction) => StoreState
+};
 
 // Action type constants.
 export const enum ActionTypes {

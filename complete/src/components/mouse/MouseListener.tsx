@@ -3,21 +3,25 @@ import throttle from 'raf-throttle';
 import {Point} from '../../types';
 
 interface Props {
+  className?: string;
   onMouseMove: (position: Point) => void;
   onMouseDown: (position: Point) => void;
   onMouseUp: (position: Point) => void;
   onMouseLeave: (position: Point) => void;
   onClick: (position: Point) => void;
+  children?: (position: Point) => JSX.Element;
 }
 
 interface State {
   bounds: Point;
+  position: Point;
 }
 
-export class MouseLayer extends React.PureComponent<Props, State> {
+export class MouseListener extends React.PureComponent<Props, State> {
   private el: HTMLDivElement | null = null;
   public state: State = {
     bounds: {x: 0, y: 0},
+    position: {x: -1, y: -1},
   };
 
   public componentDidMount() {
@@ -48,7 +52,9 @@ export class MouseLayer extends React.PureComponent<Props, State> {
   }
 
   private throttledMouseMove = throttle((e: Partial<React.MouseEvent<HTMLDivElement>>) => {
-    this.props.onMouseMove(this.eventToPosition(e));
+    let position = this.eventToPosition(e);
+    this.props.onMouseMove(position);
+    this.setState({position});
   });
 
   private handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -64,6 +70,7 @@ export class MouseLayer extends React.PureComponent<Props, State> {
   };
 
   private handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    this.setState({position: {x: -1, y: -1}});
     this.props.onMouseLeave(this.eventToPosition(e));
   };
 
@@ -75,13 +82,15 @@ export class MouseLayer extends React.PureComponent<Props, State> {
     return (
       <div
         ref={this.setEl}
-        className="layer mouse-layer"
+        className={this.props.className}
         onMouseMove={this.handleMouseMove}
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
         onMouseLeave={this.handleMouseLeave}
         onClick={this.handleClick}
-      />
+      >
+        {this.props.children ? this.props.children(this.state.position) : null}
+      </div>
     );
   }
 }

@@ -9,20 +9,16 @@ import './Tile.css';
 interface Props {
   className?: string;
   style?: React.CSSProperties;
+  id: string;
   type: string;
+  updated?: number;
   edges?: TileEdges;
   onClick?: (type: string) => void;
 }
 
 export class Tile extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
-    return !(
-      this.props.className === nextProps.className &&
-      this.props.type === nextProps.type &&
-      this.props.onClick === nextProps.onClick &&
-      _.isEqual(this.props.style, nextProps.style) &&
-      _.isEqual(this.props.edges, nextProps.edges)
-    );
+    return nextProps.updated ? nextProps.updated !== this.props.updated : true;
   }
 
   private handleClick = (e: React.MouseEvent<HTMLDivElement>) => {

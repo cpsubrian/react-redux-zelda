@@ -1,6 +1,6 @@
 .tile {
   /* This slight scale avoids pixel rounding gaps. */
-  /*transform: scale(1.01);*/
+  transform: scale(1.01);
 }
 .tile .edges {
   position: absolute;

@@ -2,13 +2,12 @@ import {MAP_WIDTH, MAP_HEIGHT} from '../constants';
 import {Bounds, Layer, TileEdges} from '../types';
 import {Quadtree} from './quadtree';
 
-export const getCollisions = (
-  tiles: Layer['tiles'],
-  bounds: Bounds
-): Array<Bounds & {id: string; tile: string}> => {
+export type Collisions = Array<Bounds & {id: string; tile: string}>;
+
+export const getCollisions = (tiles: Layer['tiles'], bounds: Bounds): Collisions => {
   const quadtree = createQuadtree(tiles);
   const possible = quadtree.retrieve(bounds);
-  const collisions = [];
+  const collisions: Collisions = [];
 
   for (let check of possible) {
     if (
@@ -26,9 +25,7 @@ export const getCollisions = (
   return collisions;
 };
 
-export const getEdges = (tiles: Layer['tiles'], tileId: string, bounds: Bounds): TileEdges => {
-  const edges: TileEdges = {};
-
+export const getAdjacent = (tiles: Layer['tiles'], tileId: string, bounds: Bounds): Collisions => {
   // Create a box that is one pixel larger on each side.
   const edgeBounds: Bounds = {
     x: bounds.x - 1,
@@ -37,9 +34,17 @@ export const getEdges = (tiles: Layer['tiles'], tileId: string, bounds: Bounds):
     height: bounds.height + 2,
   };
 
-  // Get collision and check each edge.
-  const collisions = getCollisions(tiles, edgeBounds);
-  collisions.forEach(({x, y, width, height, id, tile}) => {
+  // Get collision and return them, filtering out ourself.
+  return getCollisions(tiles, edgeBounds).filter(collision => {
+    return collision.id !== tileId;
+  });
+};
+
+export const getEdges = (tiles: Layer['tiles'], tileId: string, bounds: Bounds): TileEdges => {
+  const edges: TileEdges = {};
+
+  // Check each adjacent tile.
+  getAdjacent(tiles, tileId, bounds).forEach(({x, y, width, height, id, tile}) => {
     if (tileId === id) {
       return;
     }
@@ -102,7 +107,7 @@ export const getEdges = (tiles: Layer['tiles'], tileId: string, bounds: Bounds):
 };
 
 export const createQuadtree = (tiles: Layer['tiles']) => {
-  const quadtree = new Quadtree({x: 0, y: 0, width: MAP_WIDTH, height: MAP_HEIGHT}, 5, 10);
+  const quadtree = new Quadtree({x: 0, y: 0, width: MAP_WIDTH, height: MAP_HEIGHT});
 
   // Loop over tiles and add to quadtree.
   tiles.forEach(({bounds, id, tile}) => {
