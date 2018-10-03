@@ -24,13 +24,24 @@ export const paintTile: ActionCreator<
   return (dispatch, getState) => {
     // Get the tiles for this layer.
     let layers = getState().layers;
+    let skipPaint = false;
 
     // Check for sprite collisions in same or higher layers and erase them.
     const level = LAYERS.indexOf(layer);
     for (let i = level; i < LAYERS.length; i++) {
-      getCollisions(layers[LAYERS[i]].tiles, bounds).forEach(({id}) => {
-        dispatch(eraseTile(LAYERS[i], id));
+      getCollisions(layers[LAYERS[i]].tiles, bounds).forEach(collision => {
+        // if the tile we're trying to paint already exists, skip the paint.
+        if (collision.tile === tile && collision.x === bounds.x && collision.y === bounds.y) {
+          skipPaint = true;
+        } else {
+          dispatch(eraseTile(LAYERS[i], collision.id));
+        }
       });
+    }
+
+    // Skip the paint if nothing else is changing.
+    if (skipPaint) {
+      return;
     }
 
     // Pain the tile, with edges recalculated.
@@ -40,7 +51,7 @@ export const paintTile: ActionCreator<
       id,
       tile,
       bounds,
-      edges: getEdges(layers[layer].tiles, id, bounds),
+      edges: getEdges(layers[layer].tiles, tile, id, bounds),
     });
 
     // Re-fetch the layers.
@@ -55,7 +66,7 @@ export const paintTile: ActionCreator<
         id,
         tile,
         bounds,
-        edges: getEdges(layers[layer].tiles, id, bounds),
+        edges: getEdges(layers[layer].tiles, tile, id, bounds),
       });
     });
   };

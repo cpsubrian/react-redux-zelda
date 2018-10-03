@@ -1,4 +1,5 @@
 import {MAP_WIDTH, MAP_HEIGHT} from '../constants';
+import {tiles as tileTypes} from '../tiles';
 import {Bounds, Layer, TileEdges} from '../types';
 import {Quadtree} from './quadtree';
 
@@ -40,12 +41,28 @@ export const getAdjacent = (tiles: Layer['tiles'], tileId: string, bounds: Bound
   });
 };
 
-export const getEdges = (tiles: Layer['tiles'], tileId: string, bounds: Bounds): TileEdges => {
+export const getEdges = (
+  tiles: Layer['tiles'],
+  tileType: string,
+  tileId: string,
+  bounds: Bounds
+): TileEdges => {
   const edges: TileEdges = {};
+
+  // If our tile type doesn't use edges, bail.
+  if (!tileTypes[tileType] || !tileTypes[tileType].edges) {
+    return edges;
+  }
+
+  // Stash the tile types we care about.
+  const edgeTileTyeps = Object.keys(tileTypes[tileType].edges!);
 
   // Check each adjacent tile.
   getAdjacent(tiles, tileId, bounds).forEach(({x, y, width, height, id, tile}) => {
     if (tileId === id) {
+      return;
+    }
+    if (edgeTileTyeps.indexOf(tile) < 0) {
       return;
     }
 
