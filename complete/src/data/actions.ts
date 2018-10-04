@@ -1,6 +1,10 @@
 import {Action} from 'redux';
 import {ActionTypes, LayerName, TileInstance} from '../types';
 
+/**
+ * Action object type definitions.
+ */
+
 export interface SelectTileType extends Action {
   type: ActionTypes.SELECT_TILE_TYPE;
   tileType: string;

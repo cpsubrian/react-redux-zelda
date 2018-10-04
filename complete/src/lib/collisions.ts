@@ -3,6 +3,22 @@ import {tiles as tileTypes} from '../tiles';
 import {Bounds, Layer, TileEdges, TileInstance} from '../types';
 import {Quadtree} from './quadtree';
 
+/**
+ * Method for calculating tile collisions and other related
+ * extrapolations from them. Our method for checking collisions
+ * involves two main steps:
+ *
+ * - First, we load all active tiles into a data structure called
+ *   a QuadTree. A quad tree specializes in grouping objects
+ *   in a 2-D space and subdividing that space further and further
+ *   the more objects you add to it. This allows us to check for
+ *   collisions without looping through the entire set of objects.
+ *   Instead, the QuadTree gives us a set of possible matches
+ *   based on the 'quadrants' that objects being tested share.
+ *
+ * - Second, we can use some simple bounds checking to confirm whether
+ *   any of those objects actually collide.
+ */
 export const getCollisions = (tiles: Layer['tiles'], bounds: Bounds): Array<TileInstance> => {
   const quadtree = createQuadtree(tiles);
   const possible = quadtree.retrieve(bounds);
@@ -24,6 +40,11 @@ export const getCollisions = (tiles: Layer['tiles'], bounds: Bounds): Array<Tile
   return collisions;
 };
 
+/**
+ * Returns a list of adjacent tiles, by checking for collisions with
+ * a bounding box exactly one pixel bigger than our target on each
+ * side.
+ */
 export const getAdjacent = (tiles: Layer['tiles'], tile: TileInstance): Array<TileInstance> => {
   // Create a box that is one pixel larger on each side.
   const edgeBounds: Bounds = {
@@ -39,6 +60,12 @@ export const getAdjacent = (tiles: Layer['tiles'], tile: TileInstance): Array<Ti
   });
 };
 
+/**
+ * Special function to compute the 'edges' of a given tile.
+ * Each tile type may specify which other tile types it
+ * cares if its next to. For example, if a grass tile is next
+ * to water we need to render extra art on those sides.
+ */
 export const getEdges = (tiles: Layer['tiles'], tile: TileInstance): TileEdges => {
   const {bounds, tileType} = tile;
   const edges: TileEdges = {};
@@ -56,13 +83,18 @@ export const getEdges = (tiles: Layer['tiles'], tile: TileInstance): TileEdges =
     const aType = adjacent.tileType;
     const {x, y} = adjacent.bounds;
 
+    // Don't count ourself.
     if (tile.id === adjacent.id) {
       return;
     }
+
+    // Bail if the current tile type is not one
+    // that we care about being adjacent to.
     if (edgeTileTyeps.indexOf(aType) < 0) {
       return;
     }
 
+    // Calculate which edge this tile is touching.
     if (y < bounds.y) {
       if (x < bounds.x) {
         edges.nw = aType;
@@ -120,6 +152,10 @@ export const getEdges = (tiles: Layer['tiles'], tile: TileInstance): TileEdges =
   return edges;
 };
 
+/**
+ * Create our Quadtree data structure form an array
+ * of tiles.
+ */
 export const createQuadtree = (tiles: Layer['tiles']) => {
   const quadtree = new Quadtree({x: 0, y: 0, width: MAP_WIDTH, height: MAP_HEIGHT});
 

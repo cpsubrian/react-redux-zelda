@@ -5,6 +5,9 @@ import {StoreState, ActionTypes, LayerName, TileInstance} from '../types';
 import * as Actions from './actions';
 import {getCollisions, getAdjacent, getEdges} from '../lib/collisions';
 
+/**
+ * Creates an action to select the given tile type.
+ */
 export const selectTileType: ActionCreator<Actions.SelectTileType> = (tileType: string) => {
   return {
     type: ActionTypes.SELECT_TILE_TYPE,
@@ -12,12 +15,17 @@ export const selectTileType: ActionCreator<Actions.SelectTileType> = (tileType: 
   };
 };
 
+/**
+ * Creates an action that unselectes the current tile type.
+ */
 export const unselectTileType: ActionCreator<Actions.UnselectTileType> = () => {
   return {
     type: ActionTypes.UNSELECT_TILE_TYPE,
   };
 };
 
+// The thunk action type that will be returned by our
+// paintTile action creator.
 export type PaintThunkAction = ThunkAction<
   void,
   StoreState,
@@ -25,6 +33,15 @@ export type PaintThunkAction = ThunkAction<
   Actions.PaintTile | Actions.EraseTile
 >;
 
+/**
+ * Creates a 'thunk' action that will handle painting
+ * a tile to the map. Thunks are actions that are functions
+ * instead of objects and they are enabled by the
+ * redux-thunk middleware. The function is passed:
+ *
+ * - dispatch: A function that can fire off additional actions.
+ * - getState: A function that returns the current store state.
+ */
 export const paintTile: ActionCreator<PaintThunkAction> = (
   layer: LayerName,
   tile: TileInstance
@@ -68,6 +85,9 @@ export const paintTile: ActionCreator<PaintThunkAction> = (
   };
 };
 
+/**
+ * Creates an action that erases a tile from the map.
+ */
 export const eraseTile: ActionCreator<Actions.EraseTile> = (
   layer: LayerName,
   tile: TileInstance
