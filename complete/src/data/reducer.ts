@@ -48,17 +48,16 @@ const handlers: ActionHandlers = {
    * Dispatched when we should 'paint' a tile into a layer.
    */
   [ActionTypes.PAINT_TILE]: (state, action: Actions.PaintTile) => {
-    const {layer, id, tileType, bounds, edges} = action;
-    const index = state.layers[layer].tiles.findIndex(tile => tile.id === id);
-    const paintedTile: TileInstance = {id, tileType, bounds, edges};
+    const {layer, tile} = action;
+    const index = state.layers[layer].tiles.findIndex(({id}) => tile.id === id);
     let oldTiles = state.layers[layer].tiles;
     let newTiles: ReadonlyArray<TileInstance> = [];
 
     // If tile already exists replace it, otherwise add it to the existing tiles.
     if (index >= 0) {
-      newTiles = [...oldTiles.slice(0, index), paintedTile, ...oldTiles.slice(index + 1)];
+      newTiles = [...oldTiles.slice(0, index), tile, ...oldTiles.slice(index + 1)];
     } else {
-      newTiles = [...oldTiles, paintedTile];
+      newTiles = [...oldTiles, tile];
     }
 
     return {
@@ -77,8 +76,8 @@ const handlers: ActionHandlers = {
    *  Dispatched when a tile should be erased from a layer
    */
   [ActionTypes.ERASE_TILE]: (state, action: Actions.PaintTile) => {
-    const {layer, id} = action;
-    const index = state.layers[layer].tiles.findIndex(tile => tile.id === id);
+    const {layer, tile} = action;
+    const index = state.layers[layer].tiles.findIndex(({id}) => tile.id === id);
     return index >= 0
       ? {
           ...state,

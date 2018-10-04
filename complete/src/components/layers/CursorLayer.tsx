@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cx from 'classnames';
+import * as _ from 'lodash';
 import {Point} from '../../types';
 import {tiles} from '../../tiles';
 import {Tile} from '../tile/Tile';
@@ -9,7 +10,8 @@ interface Props {
   cellSize: number;
   position: Point;
   selectedTileType: string | null;
-  onClick?: (position: Point) => void;
+  onCursorDown?: (position: Point) => void;
+  onCursorUp?: (position: Point) => void;
   onCursorMove?: (position: Point) => void;
 }
 
@@ -25,7 +27,7 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
       const snapPosition = this.getSnapPosition(position);
       const prevSnapPosition = this.getSnapPosition(prevPosition);
 
-      if (snapPosition !== prevSnapPosition) {
+      if (!_.isEqual(snapPosition, prevSnapPosition)) {
         this.props.onCursorMove(snapPosition);
       }
     }
@@ -79,18 +81,31 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
     };
   }
 
-  private handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  private handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const {position, selectedTileType} = this.props;
     const withinMap = position.x >= 0 && position.y >= 0;
 
-    if (withinMap && selectedTileType && this.props.onClick) {
-      this.props.onClick(this.getSnapPosition(position));
+    if (withinMap && selectedTileType && this.props.onCursorDown) {
+      this.props.onCursorDown(this.getSnapPosition(position));
+    }
+  };
+
+  private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+    const {position, selectedTileType} = this.props;
+    const withinMap = position.x >= 0 && position.y >= 0;
+
+    if (withinMap && selectedTileType && this.props.onCursorUp) {
+      this.props.onCursorUp(this.getSnapPosition(position));
     }
   };
 
   render() {
     return (
-      <div className="layer cursor-layer" onClick={this.handleClick}>
+      <div
+        className="layer cursor-layer"
+        onMouseDown={this.handleMouseDown}
+        onMouseUp={this.handleMouseUp}
+      >
         <div
           className={cx('cursor', {'has-tile': !!this.props.selectedTileType})}
           style={this.getCursorStyle()}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import {connect} from 'react-redux';
-import {Bounds, Point, StoreState} from '../../types';
+import {Point, TileInstance, StoreState} from '../../types';
 import {idgen} from '../../lib/idgen';
 import {selectedTileTypeSelector} from '../../data/selectors';
 import {tiles} from '../../tiles';
@@ -36,24 +36,32 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
   };
 
   private paintTile(tileType: string, position: Point) {
-    const tile = tiles[tileType];
+    const {layer, size} = tiles[tileType];
 
-    // Create bounds for our new tile.
-    const bounds: Bounds = {
-      ...position,
-      width: tile.size[0],
-      height: tile.size[1],
+    // Create a new tile instance.
+    const tile: TileInstance = {
+      id: idgen(),
+      tileType,
+      bounds: {
+        ...position,
+        width: size[0],
+        height: size[1],
+      },
+      edges: {},
     };
 
     // Paint the new tile.
-    this.props.paintTile(tile.layer, idgen(), tile.tileType, bounds);
+    this.props.paintTile(layer, tile);
   }
 
-  private handleMouseDown = (position: Point) => {
-    this.setState({isPainting: true});
+  private handleCursorDown = (position: Point) => {
+    if (this.props.selectedTileType) {
+      this.setState({isPainting: true});
+      this.paintTile(this.props.selectedTileType, position);
+    }
   };
 
-  private handleMouseUp = (position: Point) => {
+  private handleCursorUp = (position: Point) => {
     this.setState({isPainting: false});
   };
 
@@ -63,19 +71,13 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
     }
   };
 
-  private handleMouseLeave = (position: Point) => {
+  private handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     this.setState({isPainting: false});
-  };
-
-  private handleClick = (position: Point) => {
-    if (this.props.selectedTileType) {
-      this.paintTile(this.props.selectedTileType, position);
-    }
   };
 
   public render() {
     return (
-      <div className="map">
+      <div className="map" onMouseLeave={this.handleMouseLeave}>
         <div
           className="layers"
           style={{
@@ -85,18 +87,15 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
         >
           <TilesLayer name="terrain" />
           <TilesLayer name="objects" />
-          <MouseListener
-            onMouseDown={this.handleMouseDown}
-            onMouseUp={this.handleMouseUp}
-            onMouseLeave={this.handleMouseLeave}
-          >
+          <MouseListener>
             {position => (
               <CursorLayer
                 position={position}
                 cellSize={this.props.cellSize}
                 selectedTileType={this.props.selectedTileType}
+                onCursorDown={this.handleCursorDown}
+                onCursorUp={this.handleCursorUp}
                 onCursorMove={this.handleCursorMove}
-                onClick={this.handleClick}
               />
             )}
           </MouseListener>

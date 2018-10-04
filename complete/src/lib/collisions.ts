@@ -1,14 +1,12 @@
 import {MAP_WIDTH, MAP_HEIGHT} from '../constants';
 import {tiles as tileTypes} from '../tiles';
-import {Bounds, Layer, TileEdges} from '../types';
+import {Bounds, Layer, TileEdges, TileInstance} from '../types';
 import {Quadtree} from './quadtree';
 
-export type Collisions = Array<Bounds & {id: string; tileType: string}>;
-
-export const getCollisions = (tiles: Layer['tiles'], bounds: Bounds): Collisions => {
+export const getCollisions = (tiles: Layer['tiles'], bounds: Bounds): Array<TileInstance> => {
   const quadtree = createQuadtree(tiles);
   const possible = quadtree.retrieve(bounds);
-  const collisions: Collisions = [];
+  const collisions: Array<TileInstance> = [];
 
   for (let check of possible) {
     if (
@@ -19,34 +17,30 @@ export const getCollisions = (tiles: Layer['tiles'], bounds: Bounds): Collisions
     ) {
       continue;
     } else {
-      collisions.push(check);
+      collisions.push(check.tile);
     }
   }
 
   return collisions;
 };
 
-export const getAdjacent = (tiles: Layer['tiles'], tileId: string, bounds: Bounds): Collisions => {
+export const getAdjacent = (tiles: Layer['tiles'], tile: TileInstance): Array<TileInstance> => {
   // Create a box that is one pixel larger on each side.
   const edgeBounds: Bounds = {
-    x: bounds.x - 1,
-    y: bounds.y - 1,
-    width: bounds.width + 2,
-    height: bounds.height + 2,
+    x: tile.bounds.x - 1,
+    y: tile.bounds.y - 1,
+    width: tile.bounds.width + 2,
+    height: tile.bounds.height + 2,
   };
 
   // Get collision and return them, filtering out ourself.
   return getCollisions(tiles, edgeBounds).filter(collision => {
-    return collision.id !== tileId;
+    return collision.id !== tile.id;
   });
 };
 
-export const getEdges = (
-  tiles: Layer['tiles'],
-  tileType: string,
-  tileId: string,
-  bounds: Bounds
-): TileEdges => {
+export const getEdges = (tiles: Layer['tiles'], tile: TileInstance): TileEdges => {
+  const {bounds, tileType} = tile;
   const edges: TileEdges = {};
 
   // If our tile type doesn't use edges, bail.
@@ -58,36 +52,41 @@ export const getEdges = (
   const edgeTileTyeps = Object.keys(tileTypes[tileType].edges!);
 
   // Check each adjacent tile.
-  getAdjacent(tiles, tileId, bounds).forEach(({x, y, width, height, id, tileType}) => {
-    if (tileId === id) {
+  getAdjacent(tiles, tile).forEach(adjacent => {
+    const aType = adjacent.tileType;
+    const {x, y} = adjacent.bounds;
+
+    console.log('adjacent', adjacent);
+
+    if (tile.id === adjacent.id) {
       return;
     }
-    if (edgeTileTyeps.indexOf(tileType) < 0) {
+    if (edgeTileTyeps.indexOf(aType) < 0) {
       return;
     }
 
     if (y < bounds.y) {
       if (x < bounds.x) {
-        edges.nw = tileType;
+        edges.nw = aType;
       } else if (x >= bounds.x + bounds.width) {
-        edges.ne = tileType;
+        edges.ne = aType;
       } else {
-        edges.n = tileType;
+        edges.n = aType;
       }
     } else if (y >= bounds.y + bounds.height) {
       if (x < bounds.x) {
-        edges.sw = tileType;
+        edges.sw = aType;
       } else if (x >= bounds.x + bounds.width) {
-        edges.se = tileType;
+        edges.se = aType;
       } else {
-        edges.s = tileType;
+        edges.s = aType;
       }
     } else {
       if (x < bounds.x) {
-        edges.w = tileType;
+        edges.w = aType;
       }
       if (x >= bounds.x + bounds.width) {
-        edges.e = tileType;
+        edges.e = aType;
       }
     }
   });
@@ -120,6 +119,7 @@ export const getEdges = (
     edges.saw = edges.s;
   }
 
+  console.log('edges', edges);
   return edges;
 };
 
@@ -127,8 +127,8 @@ export const createQuadtree = (tiles: Layer['tiles']) => {
   const quadtree = new Quadtree({x: 0, y: 0, width: MAP_WIDTH, height: MAP_HEIGHT});
 
   // Loop over tiles and add to quadtree.
-  tiles.forEach(({bounds, id, tileType}) => {
-    quadtree.insert({...bounds, id, tileType});
+  tiles.forEach(tile => {
+    quadtree.insert({...tile.bounds, tile});
   });
 
   return quadtree;

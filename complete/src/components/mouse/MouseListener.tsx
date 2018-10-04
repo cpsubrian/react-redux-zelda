@@ -4,9 +4,7 @@ import {Point} from '../../types';
 
 interface Props {
   className?: string;
-  onMouseDown: (position: Point) => void;
-  onMouseUp: (position: Point) => void;
-  onMouseLeave: (position: Point) => void;
+  onMouseMove?: (position: Point) => void;
   children?: (position: Point) => JSX.Element;
 }
 
@@ -52,35 +50,18 @@ export class MouseListener extends React.PureComponent<Props, State> {
   private throttledMouseMove = throttle((e: Partial<React.MouseEvent<HTMLDivElement>>) => {
     let position = this.eventToPosition(e);
     this.setState({position});
+    if (this.props.onMouseMove) {
+      this.props.onMouseMove(position);
+    }
   });
 
   private handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     this.throttledMouseMove({pageX: e.pageX, pageY: e.pageY});
   };
 
-  private handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    this.props.onMouseDown(this.eventToPosition(e));
-  };
-
-  private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-    this.props.onMouseUp(this.eventToPosition(e));
-  };
-
-  private handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    this.setState({position: {x: -1, y: -1}});
-    this.props.onMouseLeave(this.eventToPosition(e));
-  };
-
   public render() {
     return (
-      <div
-        ref={this.setEl}
-        className={this.props.className}
-        onMouseMove={this.handleMouseMove}
-        onMouseDown={this.handleMouseDown}
-        onMouseUp={this.handleMouseUp}
-        onMouseLeave={this.handleMouseLeave}
-      >
+      <div ref={this.setEl} className={this.props.className} onMouseMove={this.handleMouseMove}>
         {this.props.children ? this.props.children(this.state.position) : null}
       </div>
     );
