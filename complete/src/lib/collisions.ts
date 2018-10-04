@@ -56,8 +56,6 @@ export const getEdges = (tiles: Layer['tiles'], tile: TileInstance): TileEdges =
     const aType = adjacent.tileType;
     const {x, y} = adjacent.bounds;
 
-    console.log('adjacent', adjacent);
-
     if (tile.id === adjacent.id) {
       return;
     }
@@ -119,7 +117,6 @@ export const getEdges = (tiles: Layer['tiles'], tile: TileInstance): TileEdges =
     edges.saw = edges.s;
   }
 
-  console.log('edges', edges);
   return edges;
 };
 

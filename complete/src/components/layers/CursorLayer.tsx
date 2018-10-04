@@ -9,12 +9,19 @@ import './CursorLayer.css';
 interface Props {
   cellSize: number;
   position: Point;
-  selectedTileType: string | null;
+  tileType: string | null;
   onCursorDown?: (position: Point) => void;
   onCursorUp?: (position: Point) => void;
   onCursorMove?: (position: Point) => void;
 }
 
+/**
+ * The cursor layer provides two main functions:
+ *
+ * - It responsed to position changes and renders a cursor (a floating tile).
+ * - It tracks movement against 'snap points' that are determined based
+ *   on the cellSize or the size of the tile, whichever is smaller.
+ */
 export class CursorLayer extends React.PureComponent<Props, {}> {
   /**
    * When we're updated, check if we've moved to a new
@@ -41,8 +48,8 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
    * @param position The position to normalize.
    */
   private getSnapPosition(position: Point): Point {
-    const {cellSize, selectedTileType} = this.props;
-    const tile = selectedTileType ? tiles[selectedTileType] : null;
+    const {cellSize, tileType} = this.props;
+    const tile = tileType ? tiles[tileType] : null;
     const snapSize = tile
       ? tile.size[0] < cellSize
         ? tile.size[0]
@@ -61,12 +68,12 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
    * Return the positioning and sizing for the cursor.
    */
   private getCursorStyle() {
-    const {position, selectedTileType} = this.props;
+    const {position, tileType} = this.props;
     const withinMap = position.x >= 0 && position.y >= 0;
 
-    if (withinMap && selectedTileType) {
+    if (withinMap && tileType) {
       const snapPosition = this.getSnapPosition(position);
-      const tile = tiles[selectedTileType];
+      const tile = tiles[tileType];
 
       return {
         top: snapPosition.y,
@@ -81,20 +88,26 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
     };
   }
 
+  /**
+   * Handle mousedown, invoking a callback with the current snapped cursor position.
+   */
   private handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    const {position, selectedTileType} = this.props;
+    const {position, tileType} = this.props;
     const withinMap = position.x >= 0 && position.y >= 0;
 
-    if (withinMap && selectedTileType && this.props.onCursorDown) {
+    if (withinMap && tileType && this.props.onCursorDown) {
       this.props.onCursorDown(this.getSnapPosition(position));
     }
   };
 
+  /**
+   * Handle mouseup, invoking a callback with the current snapped cursor position.
+   */
   private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-    const {position, selectedTileType} = this.props;
+    const {position, tileType} = this.props;
     const withinMap = position.x >= 0 && position.y >= 0;
 
-    if (withinMap && selectedTileType && this.props.onCursorUp) {
+    if (withinMap && tileType && this.props.onCursorUp) {
       this.props.onCursorUp(this.getSnapPosition(position));
     }
   };
@@ -107,14 +120,11 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
         onMouseUp={this.handleMouseUp}
       >
         <div
-          className={cx('cursor', {'has-tile': !!this.props.selectedTileType})}
+          className={cx('cursor', {'has-tile': !!this.props.tileType})}
           style={this.getCursorStyle()}
         >
-          {this.props.selectedTileType ? (
-            <Tile
-              id={`cursor-${this.props.selectedTileType}`}
-              tileType={this.props.selectedTileType}
-            />
+          {this.props.tileType ? (
+            <Tile id={`cursor-${this.props.tileType}`} tileType={this.props.tileType} />
           ) : null}
         </div>
       </div>

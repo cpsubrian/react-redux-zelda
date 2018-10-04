@@ -8,33 +8,34 @@ import {selectedTileTypeSelector} from '../../data/selectors';
 import {Tile} from '../tile/Tile';
 import './Toolbar.css';
 
+// Props provided by the react-redux higher order component wrapper.
 interface PropsFromState {
   selectedTileType: string;
 }
-
 interface PropsFromDispatch {
   selectTileType: typeof selectTileType;
   unselectTileType: typeof unselectTileType;
 }
 
+/**
+ * The toolbar component lets us select which tile type
+ * we would like to paint with.
+ */
 class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}> {
-  private layerClickHandlers: {
-    [layerName: string]: (tileType: string) => void;
-  } = {};
-
-  private handleClickTile = (layer: string) => {
-    if (!this.layerClickHandlers[layer]) {
-      this.layerClickHandlers[layer] = tileType => {
-        if (this.isSelected(tileType)) {
-          this.props.unselectTileType();
-        } else {
-          this.props.selectTileType(tileType);
-        }
-      };
+  /**
+   * Handle a tile click event and toggle our selected tile.
+   */
+  private handleClickTile = (tileType: string, id: string) => {
+    if (this.isSelected(tileType)) {
+      this.props.unselectTileType();
+    } else {
+      this.props.selectTileType(tileType);
     }
-    return this.layerClickHandlers[layer];
   };
 
+  /**
+   * Helper to check if a tile type is currently selected.
+   */
   private isSelected(tileType: string) {
     return this.props.selectedTileType && this.props.selectedTileType === tileType;
   }
@@ -49,7 +50,7 @@ class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}
               id={`toolbar-${tileType}`}
               className={cx({selected: this.isSelected(tileType)})}
               tileType={tileType}
-              onClick={this.handleClickTile(tileType)}
+              onClick={this.handleClickTile}
             />
           ))}
         </div>
@@ -58,6 +59,12 @@ class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}
   }
 }
 
+/**
+ * Wrap the toolbar component with a react-redux connect()
+ * higher-order-component. This subscribes to store changes
+ * and pulls in the selected tile. It also binds the select
+ * and unselect action creators.
+ */
 export const Toolbar = connect(
   (state: StoreState, props: {}) => {
     return {

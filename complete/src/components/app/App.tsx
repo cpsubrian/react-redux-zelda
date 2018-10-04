@@ -4,6 +4,9 @@ import {Map} from '../map/Map';
 import {Toolbar} from '../toolbar/Toolbar';
 import './App.css';
 
+/**
+ * The main application component handles the overall layout.
+ */
 export class App extends React.Component {
   public render() {
     return (
