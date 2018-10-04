@@ -2,7 +2,7 @@ import {TileSet} from '../types';
 
 export const tiles: TileSet = {
   grass: {
-    type: 'grass',
+    tileType: 'grass',
     layer: 'terrain',
     size: [16, 16],
     sprite: {
@@ -27,7 +27,7 @@ export const tiles: TileSet = {
     },
   },
   water: {
-    type: 'water',
+    tileType: 'water',
     layer: 'terrain',
     size: [16, 16],
     sprite: {
@@ -36,7 +36,7 @@ export const tiles: TileSet = {
     },
   },
   tree: {
-    type: 'tree',
+    tileType: 'tree',
     layer: 'objects',
     size: [64, 80],
     sprite: {
@@ -45,7 +45,7 @@ export const tiles: TileSet = {
     },
   },
   tree_trunk: {
-    type: 'tree_trunk',
+    tileType: 'tree_trunk',
     layer: 'objects',
     size: [32, 32],
     sprite: {
@@ -54,7 +54,7 @@ export const tiles: TileSet = {
     },
   },
   leaves: {
-    type: 'leaves',
+    tileType: 'leaves',
     layer: 'objects',
     size: [16, 16],
     sprite: {
@@ -63,7 +63,7 @@ export const tiles: TileSet = {
     },
   },
   bush: {
-    type: 'bush',
+    tileType: 'bush',
     layer: 'objects',
     size: [16, 16],
     sprite: {
@@ -72,7 +72,7 @@ export const tiles: TileSet = {
     },
   },
   flower: {
-    type: 'flower',
+    tileType: 'flower',
     layer: 'objects',
     size: [8, 8],
     sprite: {
@@ -81,7 +81,7 @@ export const tiles: TileSet = {
     },
   },
   spot: {
-    type: 'spot',
+    tileType: 'spot',
     layer: 'objects',
     size: [8, 8],
     sprite: {

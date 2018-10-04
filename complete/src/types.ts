@@ -1,48 +1,55 @@
 import {AnyAction} from 'redux';
 
 /**************************************************************************************************
- * General Typings
+ * Dimensional Typings
  */
 
+// Attributes representing a single point.
 export interface Point {
   x: number;
   y: number;
 }
 
-export interface Bounds {
+// Attributes representing a positioned 2D box.
+export interface Bounds extends Point {
   x: number;
   y: number;
   width: number;
   height: number;
 }
 
+// An abbreviated form of width and height.
 export type Size = [number, number];
 
 /**************************************************************************************************
- * Tile & Sprite Typings
+ * Layer, Tile and Sprite Typings
  */
 
+// Enumerate the valid layer names.
 export type LayerName = 'terrain' | 'objects';
 
+// A layer is comprised of tiles instances.
 export interface Layer {
   name: LayerName;
-  tiles: ReadonlyArray<LayerTile>;
+  tiles: ReadonlyArray<TileInstance>;
 }
 
-export interface LayerTile {
+// A specific tile instance, renderable to the screen.
+export interface TileInstance {
   id: string;
-  tile: string;
+  tileType: string;
   bounds: Bounds;
   edges: TileEdges;
-  updated: number;
 }
 
+// A set of tile definitions.
 export interface TileSet {
   [type: string]: Tile;
 }
 
+// An individual tile definition.
 export interface Tile {
-  type: string;
+  tileType: string;
   layer: LayerName;
   size: Size;
   sprite: SpriteKey;
@@ -53,21 +60,27 @@ export interface Tile {
   };
 }
 
-export interface TileEdges {
-  n?: string;
-  s?: string;
-  e?: string;
-  w?: string;
-  ne?: string;
-  nw?: string;
-  se?: string;
-  sw?: string;
-  naw?: string;
-  nae?: string;
-  saw?: string;
-  sae?: string;
-}
+// A list of the valid tile edge locations.
+// E.g. n = North, s = South, nw = Northwest, naw = North and West
+export type TileEdge =
+  | 'n'
+  | 's'
+  | 'e'
+  | 'w'
+  | 'ne'
+  | 'nw'
+  | 'se'
+  | 'sw'
+  | 'naw'
+  | 'nae'
+  | 'saw'
+  | 'sae';
 
+// A mapping of tile edges to tile types.
+export type TileEdges = {[Edge in TileEdge]?: Tile['tileType']};
+
+// A sprite-sheet. This is a single image that contains multiple sub-images that will be used
+// as tile 'textures'.
 export interface SpriteSheet {
   name: string;
   sprites: {
@@ -75,10 +88,12 @@ export interface SpriteSheet {
   };
 }
 
+// The attributes for a single sprite.
 export interface SpriteAttrs {
   size: Size;
 }
 
+// The properties required to identify a single sprite.
 export interface SpriteKey {
   sheet: string;
   sprite: string;
@@ -91,7 +106,7 @@ export interface SpriteKey {
 // Store state shape.
 // All nested objects and arrays should be readonly so we can enforce compile-time immutability.
 export interface StoreState {
-  selectedTileType: Tile['type'] | null;
+  selectedTileType: Tile['tileType'] | null;
   layers: {[K in LayerName]: Layer};
 }
 

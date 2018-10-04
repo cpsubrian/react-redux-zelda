@@ -10,7 +10,7 @@ interface Props {
   className?: string;
   style?: React.CSSProperties;
   id: string;
-  type: string;
+  tileType: string;
   updated?: number;
   edges?: TileEdges;
   onClick?: (type: string) => void;
@@ -18,19 +18,20 @@ interface Props {
 
 export class Tile extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
-    return nextProps.updated ? nextProps.updated !== this.props.updated : true;
+    // Perform a deep props check to bail on render if nothing has changed.
+    return !_.isEqual(nextProps, this.props);
   }
 
   private handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (this.props.onClick) {
-      this.props.onClick(this.props.type);
+      this.props.onClick(this.props.tileType);
     }
   };
 
   render() {
-    const {className, onClick, style, type, edges} = this.props;
+    const {className, onClick, style, tileType, edges} = this.props;
     const hasEdges = !!(edges && Object.keys(edges).length);
-    const tile = tiles[type];
+    const tile = tiles[tileType];
     return (
       <div
         className={cx('tile', className)}

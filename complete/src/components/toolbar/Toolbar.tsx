@@ -43,13 +43,13 @@ class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}
     return (
       <div className="toolbar">
         <div className="tiles">
-          {Object.keys(tiles).map(tile => (
+          {Object.keys(tiles).map(tileType => (
             <Tile
-              key={tile}
-              id={`toolbar-${tile}`}
-              className={cx({selected: this.isSelected(tile)})}
-              type={tile}
-              onClick={this.handleClickTile(tile)}
+              key={tileType}
+              id={`toolbar-${tileType}`}
+              className={cx({selected: this.isSelected(tileType)})}
+              tileType={tileType}
+              onClick={this.handleClickTile(tileType)}
             />
           ))}
         </div>

@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {StoreState, ActionHandlers, ActionTypes, LayerTile} from '../types';
+import {StoreState, ActionHandlers, ActionTypes, TileInstance} from '../types';
 import * as Actions from './actions';
 
 // Initial redux store state.
@@ -17,26 +17,42 @@ const initialState: Readonly<StoreState> = {
   },
 };
 
-// Redux reducer action handlers.
+/**
+ *  Redux 'action handlers'.
+ *
+ * These are really just mini-reducer functions that each handle the state change for a specific
+ * action. This is an alternative pattern to having one giant switch statement in the main reducer.
+ */
 const handlers: ActionHandlers = {
+  /**
+   * Dispatched when a tile type is selected from the toolbar.
+   */
   [ActionTypes.SELECT_TILE_TYPE]: (state, action: Actions.SelectTileType) => {
     return {
       ...state,
-      selectedTileType: action.tile,
+      selectedTileType: action.tileType,
     };
   },
+
+  /**
+   *  Dispatched when a tile type is unselected from the toolbar.
+   */
   [ActionTypes.UNSELECT_TILE_TYPE]: (state, action: Actions.UnselectTileType) => {
     return {
       ...state,
       selectedTileType: null,
     };
   },
+
+  /**
+   * Dispatched when we should 'paint' a tile into a layer.
+   */
   [ActionTypes.PAINT_TILE]: (state, action: Actions.PaintTile) => {
-    const {layer, id, tile, bounds, edges} = action;
+    const {layer, id, tileType, bounds, edges} = action;
     const index = state.layers[layer].tiles.findIndex(tile => tile.id === id);
-    const paintedTile = {id, tile, bounds, edges, updated: Date.now()};
+    const paintedTile: TileInstance = {id, tileType, bounds, edges};
     let oldTiles = state.layers[layer].tiles;
-    let newTiles: ReadonlyArray<LayerTile> = [];
+    let newTiles: ReadonlyArray<TileInstance> = [];
 
     // If tile already exists replace it, otherwise add it to the existing tiles.
     if (index >= 0) {
@@ -56,6 +72,10 @@ const handlers: ActionHandlers = {
       },
     };
   },
+
+  /**
+   *  Dispatched when a tile should be erased from a layer
+   */
   [ActionTypes.ERASE_TILE]: (state, action: Actions.PaintTile) => {
     const {layer, id} = action;
     const index = state.layers[layer].tiles.findIndex(tile => tile.id === id);
@@ -77,7 +97,9 @@ const handlers: ActionHandlers = {
   },
 };
 
-// The main reducer. Defers to action handlers defined above.
+/**
+ *  The main reducer. Defers to action handlers defined above.
+ */
 export const reducer = (state: StoreState = initialState, action: AnyAction): StoreState => {
   if (handlers[action.type]) {
     return handlers[action.type](state, action);

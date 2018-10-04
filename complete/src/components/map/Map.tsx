@@ -38,9 +38,9 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
     lastSnap: null,
   };
 
-  private paintTile(type: string, position: Point) {
+  private paintTile(tileType: string, position: Point) {
     const {cellSize} = this.props;
-    const tile = tiles[type];
+    const tile = tiles[tileType];
     const snapSize =
       tile.size[0] < cellSize ? tile.size[0] : tile.size[1] < cellSize ? tile.size[1] : cellSize;
 
@@ -61,7 +61,7 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
     this.setState({lastSnap: bounds});
 
     // Paint the new tile.
-    this.props.paintTile(tile.layer, idgen(), tile.type, bounds);
+    this.props.paintTile(tile.layer, idgen(), tile.tileType, bounds);
   }
 
   private handleMouseDown = (position: Point) => {

@@ -40,7 +40,10 @@ export class CursorLayer extends React.PureComponent<Props, {}> {
           style={this.getCursorStyle()}
         >
           {this.props.selectedTileType ? (
-            <Tile id={`cursor-${this.props.selectedTileType}`} type={this.props.selectedTileType} />
+            <Tile
+              id={`cursor-${this.props.selectedTileType}`}
+              tileType={this.props.selectedTileType}
+            />
           ) : null}
         </div>
       </div>

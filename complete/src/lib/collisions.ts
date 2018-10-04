@@ -3,7 +3,7 @@ import {tiles as tileTypes} from '../tiles';
 import {Bounds, Layer, TileEdges} from '../types';
 import {Quadtree} from './quadtree';
 
-export type Collisions = Array<Bounds & {id: string; tile: string}>;
+export type Collisions = Array<Bounds & {id: string; tileType: string}>;
 
 export const getCollisions = (tiles: Layer['tiles'], bounds: Bounds): Collisions => {
   const quadtree = createQuadtree(tiles);
@@ -58,36 +58,36 @@ export const getEdges = (
   const edgeTileTyeps = Object.keys(tileTypes[tileType].edges!);
 
   // Check each adjacent tile.
-  getAdjacent(tiles, tileId, bounds).forEach(({x, y, width, height, id, tile}) => {
+  getAdjacent(tiles, tileId, bounds).forEach(({x, y, width, height, id, tileType}) => {
     if (tileId === id) {
       return;
     }
-    if (edgeTileTyeps.indexOf(tile) < 0) {
+    if (edgeTileTyeps.indexOf(tileType) < 0) {
       return;
     }
 
     if (y < bounds.y) {
       if (x < bounds.x) {
-        edges.nw = tile;
+        edges.nw = tileType;
       } else if (x >= bounds.x + bounds.width) {
-        edges.ne = tile;
+        edges.ne = tileType;
       } else {
-        edges.n = tile;
+        edges.n = tileType;
       }
     } else if (y >= bounds.y + bounds.height) {
       if (x < bounds.x) {
-        edges.sw = tile;
+        edges.sw = tileType;
       } else if (x >= bounds.x + bounds.width) {
-        edges.se = tile;
+        edges.se = tileType;
       } else {
-        edges.s = tile;
+        edges.s = tileType;
       }
     } else {
       if (x < bounds.x) {
-        edges.w = tile;
+        edges.w = tileType;
       }
       if (x >= bounds.x + bounds.width) {
-        edges.e = tile;
+        edges.e = tileType;
       }
     }
   });
@@ -127,8 +127,8 @@ export const createQuadtree = (tiles: Layer['tiles']) => {
   const quadtree = new Quadtree({x: 0, y: 0, width: MAP_WIDTH, height: MAP_HEIGHT});
 
   // Loop over tiles and add to quadtree.
-  tiles.forEach(({bounds, id, tile}) => {
-    quadtree.insert({...bounds, id, tile});
+  tiles.forEach(({bounds, id, tileType}) => {
+    quadtree.insert({...bounds, id, tileType});
   });
 
   return quadtree;

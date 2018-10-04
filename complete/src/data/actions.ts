@@ -3,7 +3,7 @@ import {Bounds, ActionTypes, LayerName, TileEdges} from '../types';
 
 export interface SelectTileType extends Action {
   type: ActionTypes.SELECT_TILE_TYPE;
-  tile: string;
+  tileType: string;
 }
 
 export interface UnselectTileType extends Action {
@@ -14,7 +14,7 @@ export interface PaintTile extends Action {
   type: ActionTypes.PAINT_TILE;
   layer: LayerName;
   id: string;
-  tile: string;
+  tileType: string;
   bounds: Bounds;
   edges: TileEdges;
 }
