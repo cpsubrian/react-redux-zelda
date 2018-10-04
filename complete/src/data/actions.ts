@@ -1,5 +1,6 @@
 import {Action} from 'redux';
-import {ActionTypes, LayerName, TileInstance} from '../types';
+import {ThunkAction} from 'redux-thunk';
+import {ActionTypes, LayerName, TileInstance, StoreState} from '../types';
 
 /**
  * Action object type definitions.
@@ -25,3 +26,7 @@ export interface EraseTile extends Action {
   layer: LayerName;
   tile: TileInstance;
 }
+
+export type PaintTileThunk = ThunkAction<void, StoreState, void, PaintTile | EraseTile>;
+
+export type RepaintAdjacentTilesThunk = ThunkAction<void, StoreState, void, PaintTile>;
