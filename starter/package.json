@@ -1,0 +1,14 @@
+{
+  "name": "react-redux-zelda-complete",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "../node_modules/.bin/react-scripts-ts start",
+    "build": "../node_modules/.bin/react-scripts-ts build",
+    "test": "../node_modules/.bin/react-scripts-ts test --env=jsdom",
+    "eject": "../node_modules/.bin/react-scripts-ts eject",
+    "serve": "../node_modules/.bin/serve -s build",
+    "prod": "yarn build && yarn serve"
+  }
+}

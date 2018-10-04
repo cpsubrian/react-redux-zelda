@@ -1,0 +1,108 @@
+.sprite-overworld {
+  width: 16px;
+  height: 16px;
+  background-image: url('./overworld.png');
+}
+.sprite-overworld--grass {
+  width: 16px;
+  height: 16px;
+  background-color: #4b974c;
+  background-image: none;
+}
+.sprite-overworld--grass_edge_water_n {
+  width: 16px;
+  height: 8px;
+  background-position: -36px -227px;
+}
+.sprite-overworld--grass_edge_water_s {
+  width: 16px;
+  height: 8px;
+  background-position: -36px -185px;
+}
+.sprite-overworld--grass_edge_water_e {
+  width: 8px;
+  height: 16px;
+  background-position: -18px -202px;
+}
+.sprite-overworld--grass_edge_water_w {
+  width: 8px;
+  height: 16px;
+  background-position: -62px -202px;
+}
+.sprite-overworld--grass_edge_water_ne {
+  width: 8px;
+  height: 8px;
+  background-position: -27px -227px;
+}
+.sprite-overworld--grass_edge_water_nw {
+  width: 8px;
+  height: 8px;
+  background-position: -53px -227px;
+}
+.sprite-overworld--grass_edge_water_se {
+  width: 8px;
+  height: 8px;
+  background-position: -27px -185px;
+}
+.sprite-overworld--grass_edge_water_sw {
+  width: 8px;
+  height: 8px;
+  background-position: -53px -185px;
+}
+.sprite-overworld--grass_edge_water_naw {
+  width: 8px;
+  height: 8px;
+  background-position: -53px -218px;
+}
+.sprite-overworld--grass_edge_water_nae {
+  width: 8px;
+  height: 8px;
+  background-position: -27px -218px;
+}
+.sprite-overworld--grass_edge_water_saw {
+  width: 8px;
+  height: 8px;
+  background-position: -53px -194px;
+}
+.sprite-overworld--grass_edge_water_sae {
+  width: 8px;
+  height: 8px;
+  background-position: -27px -194px;
+}
+.sprite-overworld--water {
+  width: 16px;
+  height: 16px;
+  background-color: #5a81be;
+  background-image: none;
+}
+.sprite-overworld--tree_trunk {
+  width: 32px;
+  height: 32px;
+  background-color: #6b976c;
+  background-position: -349px -83px;
+}
+.sprite-overworld--tree {
+  width: 64px;
+  height: 82px;
+  background-position: -375px -206px;
+}
+.sprite-overworld--leaves {
+  width: 16px;
+  height: 16px;
+  background-position: -253px -57px;
+}
+.sprite-overworld--bush {
+  width: 16px;
+  height: 16px;
+  background-position: -304px -57px;
+}
+.sprite-overworld--flower {
+  width: 8px;
+  height: 8px;
+  background-position: -287px -48px;
+}
+.sprite-overworld--spot {
+  width: 8px;
+  height: 8px;
+  background-position: -240px -39px;
+}
