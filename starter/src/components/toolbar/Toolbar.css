@@ -2,16 +2,13 @@
   flex: 0 0 auto;
   margin-top: 4vh;
   padding: 5px 10px;
-  border-radius: 4px;
   background: #222;
   box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.15);
   opacity: 0.5;
-  transform: scale(0.7);
-  transition: all 150ms ease-in-out;
+  transition: opacity 150ms ease-in-out;
 }
 .toolbar:hover {
   opacity: 1;
-  transform: scale(1) translateY(-10%);
 }
 .toolbar .tiles {
   display: flex;
