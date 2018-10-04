@@ -59,9 +59,18 @@ export class MouseListener extends React.PureComponent<Props, State> {
     this.throttledMouseMove({pageX: e.pageX, pageY: e.pageY});
   };
 
+  private handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    this.setState({position: {x: -1, y: -1}});
+  };
+
   public render() {
     return (
-      <div ref={this.setEl} className={this.props.className} onMouseMove={this.handleMouseMove}>
+      <div
+        ref={this.setEl}
+        className={this.props.className}
+        onMouseMove={this.handleMouseMove}
+        onMouseLeave={this.handleMouseLeave}
+      >
         {this.props.children ? this.props.children(this.state.position) : null}
       </div>
     );
