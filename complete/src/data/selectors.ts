@@ -13,10 +13,10 @@ export const layersSelector = createSelector(
 
 export const layerSelector = createSelector(
   layersSelector,
-  (state: StoreState, props: {layer: LayerName}) => {
-    return props.layer;
+  (state: StoreState, props: {name: LayerName}) => {
+    return props.name;
   },
-  (layers, layer) => {
-    return layers[layer];
+  (layers, name) => {
+    return layers[name];
   }
 );

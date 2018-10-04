@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import {Bounds, Point, StoreState} from '../../types';
 import {idgen} from '../../lib/idgen';
-import {selectedTileTypeSelector, layersSelector} from '../../data/selectors';
+import {selectedTileTypeSelector} from '../../data/selectors';
 import {tiles} from '../../tiles';
 import {paintTile, eraseTile} from '../../data/action_creators';
 import {MouseListener} from '../mouse/MouseListener';
@@ -19,7 +19,6 @@ interface Props {
 
 interface PropsFromState {
   selectedTileType: StoreState['selectedTileType'];
-  layers: StoreState['layers'];
 }
 
 interface PropsFromDispatch {
@@ -98,8 +97,8 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
             height: this.props.height,
           }}
         >
-          <TilesLayer {...this.props.layers.terrain} />
-          <TilesLayer {...this.props.layers.objects} />
+          <TilesLayer name="terrain" />
+          <TilesLayer name="objects" />
           <MouseListener
             onMouseMove={this.handleMouseMove}
             onMouseDown={this.handleMouseDown}
@@ -125,7 +124,6 @@ export const Map = connect(
   (state: StoreState, props: Props) => {
     return {
       selectedTileType: selectedTileTypeSelector(state, props),
-      layers: layersSelector(state, props),
     };
   },
   {paintTile, eraseTile}

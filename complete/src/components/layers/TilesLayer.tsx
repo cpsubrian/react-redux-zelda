@@ -1,15 +1,20 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {Layer} from '../../types';
+import {connect} from 'react-redux';
+import {Layer, StoreState} from '../../types';
+import {layerSelector} from '../../data/selectors';
 import {Tile} from '../tile/Tile';
 import './TilesLayer.css';
 
 interface Props {
   name: Layer['name'];
+}
+
+interface PropsFromState {
   tiles: Layer['tiles'];
 }
 
-export class TilesLayer extends React.PureComponent<Props, {}> {
+export class TilesLayerView extends React.PureComponent<Props & PropsFromState, {}> {
   render() {
     return (
       <div className={`layer tiles-layer tiles-layer--${this.props.name}`}>
@@ -26,3 +31,7 @@ export class TilesLayer extends React.PureComponent<Props, {}> {
     );
   }
 }
+
+export const TilesLayer = connect((state: StoreState, props: Props) => {
+  return {...layerSelector(state, props)};
+})(TilesLayerView);
