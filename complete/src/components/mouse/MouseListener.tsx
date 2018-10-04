@@ -4,11 +4,9 @@ import {Point} from '../../types';
 
 interface Props {
   className?: string;
-  onMouseMove: (position: Point) => void;
   onMouseDown: (position: Point) => void;
   onMouseUp: (position: Point) => void;
   onMouseLeave: (position: Point) => void;
-  onClick: (position: Point) => void;
   children?: (position: Point) => JSX.Element;
 }
 
@@ -53,7 +51,6 @@ export class MouseListener extends React.PureComponent<Props, State> {
 
   private throttledMouseMove = throttle((e: Partial<React.MouseEvent<HTMLDivElement>>) => {
     let position = this.eventToPosition(e);
-    this.props.onMouseMove(position);
     this.setState({position});
   });
 
@@ -74,10 +71,6 @@ export class MouseListener extends React.PureComponent<Props, State> {
     this.props.onMouseLeave(this.eventToPosition(e));
   };
 
-  private handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    this.props.onClick(this.eventToPosition(e));
-  };
-
   public render() {
     return (
       <div
@@ -87,7 +80,6 @@ export class MouseListener extends React.PureComponent<Props, State> {
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
         onMouseLeave={this.handleMouseLeave}
-        onClick={this.handleClick}
       >
         {this.props.children ? this.props.children(this.state.position) : null}
       </div>

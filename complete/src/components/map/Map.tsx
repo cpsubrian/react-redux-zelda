@@ -28,36 +28,22 @@ interface PropsFromDispatch {
 
 interface State {
   isPainting: boolean;
-  lastSnap: Bounds | null;
 }
 
 class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDispatch, {}> {
   public state: State = {
     isPainting: false,
-    lastSnap: null,
   };
 
   private paintTile(tileType: string, position: Point) {
-    const {cellSize} = this.props;
     const tile = tiles[tileType];
-    const snapSize =
-      tile.size[0] < cellSize ? tile.size[0] : tile.size[1] < cellSize ? tile.size[1] : cellSize;
 
-    // Create position, normalized to our 'snap size'.
+    // Create bounds for our new tile.
     const bounds: Bounds = {
-      x: Math.floor(position.x / snapSize) * snapSize,
-      y: Math.floor(position.y / snapSize) * snapSize,
+      ...position,
       width: tile.size[0],
       height: tile.size[1],
     };
-
-    // If we haven't changed bounds since our last 'snap', bail.
-    if (this.state.lastSnap && _.isEqual(this.state.lastSnap, bounds)) {
-      return;
-    }
-
-    // Save the snap bounds.
-    this.setState({lastSnap: bounds});
 
     // Paint the new tile.
     this.props.paintTile(tile.layer, idgen(), tile.tileType, bounds);
@@ -71,7 +57,7 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
     this.setState({isPainting: false});
   };
 
-  private handleMouseMove = (position: Point) => {
+  private handleCursorMove = (position: Point) => {
     if (this.state.isPainting && this.props.selectedTileType) {
       this.paintTile(this.props.selectedTileType, position);
     }
@@ -100,17 +86,17 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
           <TilesLayer name="terrain" />
           <TilesLayer name="objects" />
           <MouseListener
-            onMouseMove={this.handleMouseMove}
             onMouseDown={this.handleMouseDown}
             onMouseUp={this.handleMouseUp}
             onMouseLeave={this.handleMouseLeave}
-            onClick={this.handleClick}
           >
             {position => (
               <CursorLayer
                 position={position}
                 cellSize={this.props.cellSize}
                 selectedTileType={this.props.selectedTileType}
+                onCursorMove={this.handleCursorMove}
+                onClick={this.handleClick}
               />
             )}
           </MouseListener>
