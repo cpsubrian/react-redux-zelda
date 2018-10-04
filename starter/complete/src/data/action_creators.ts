@@ -1,7 +1,6 @@
 import {ActionCreator} from 'redux';
-import {ThunkAction} from 'redux-thunk';
 import {LAYERS} from '../constants';
-import {StoreState, ActionTypes, LayerName, TileInstance} from '../types';
+import {ActionTypes, LayerName, TileInstance} from '../types';
 import * as Actions from './actions';
 import {getCollisions, getAdjacent, getEdges} from '../lib/collisions';
 
@@ -24,15 +23,6 @@ export const unselectTileType: ActionCreator<Actions.UnselectTileType> = () => {
   };
 };
 
-// The thunk action type that will be returned by our
-// paintTile action creator.
-export type PaintThunkAction = ThunkAction<
-  void,
-  StoreState,
-  void,
-  Actions.PaintTile | Actions.EraseTile
->;
-
 /**
  * Creates a 'thunk' action that will handle painting
  * a tile to the map. Thunks are actions that are functions
@@ -42,7 +32,7 @@ export type PaintThunkAction = ThunkAction<
  * - dispatch: A function that can fire off additional actions.
  * - getState: A function that returns the current store state.
  */
-export const paintTile: ActionCreator<PaintThunkAction> = (
+export const paintTile: ActionCreator<Actions.PaintTileThunk> = (
   layer: LayerName,
   tile: TileInstance
 ) => {
@@ -68,11 +58,24 @@ export const paintTile: ActionCreator<PaintThunkAction> = (
       },
     });
 
-    // Re-fetch the layers.
-    layers = getState().layers;
-
     // Re-paint all adjacent tiles, so their edges can be recalculated.
-    getAdjacent(layers[layer].tiles, tile).forEach(adjacent => {
+    dispatch(repaintAdjacentTiles(layer, tile));
+  };
+};
+
+/**
+ * Re-paint tiles adjacent to the provided one, primarily so edges
+ * can be recalculated.
+ */
+export const repaintAdjacentTiles: ActionCreator<Actions.RepaintAdjacentTilesThunk> = (
+  layer: LayerName,
+  tile: TileInstance
+) => {
+  return (dispatch, getState) => {
+    const layers = getState().layers;
+    const tiles = layers[layer].tiles;
+
+    getAdjacent(tiles, tile).forEach(adjacent => {
       dispatch({
         type: ActionTypes.PAINT_TILE,
         layer,
