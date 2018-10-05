@@ -3,10 +3,6 @@ import thunk from 'redux-thunk';
 import {reducer} from './reducer';
 
 /**
- * This module configures and initializes our Redux store.
- */
-
-/**
  * This is a special 'hack' needed to support the Chrome Redux DevTools.
  */
 declare global {

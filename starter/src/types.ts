@@ -106,27 +106,11 @@ export interface SpriteKey {
 }
 
 /**************************************************************************************************
- * Helpers to define deeply immutable/readonly data structures.
- */
-
-type Primitive = undefined | null | boolean | string | number | Function;
-
-type DeepImmutable<T> = T extends Primitive
-  ? T
-  : T extends Array<infer U>
-    ? DeepImmutableArray<U>
-    : T extends Map<infer K, infer V> ? DeepImmutableMap<K, V> : DeepImmutableObject<T>;
-
-interface DeepImmutableArray<T> extends ReadonlyArray<DeepImmutable<T>> {}
-interface DeepImmutableMap<K, V> extends ReadonlyMap<DeepImmutable<K>, DeepImmutable<V>> {}
-type DeepImmutableObject<T> = {readonly [K in keyof T]: DeepImmutable<T[K]>};
-
-/**************************************************************************************************
  * Redux Typings
  */
 
 // Store state shape.
-export type StoreState = DeepImmutable<{}>;
+export type StoreState = Readonly<{}>;
 
 // Action type constants.
 export const enum ActionTypes {}
