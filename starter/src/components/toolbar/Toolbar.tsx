@@ -1,27 +1,22 @@
 import * as React from 'react';
 import * as cx from 'classnames';
-import {connect} from 'react-redux';
+import {connectStub} from '../../lib/connectStub';
 import {tiles} from '../../tiles';
-import {StoreState} from '../../types';
-import {selectTileType, unselectTileType} from '../../data/action_creators';
-import {selectedTileTypeSelector} from '../../data/selectors';
 import {Tile} from '../tile/Tile';
 import './Toolbar.css';
 
 // Props provided by the react-redux higher order component wrapper.
-interface PropsFromState {
-  selectedTileType: string;
-}
-interface PropsFromDispatch {
-  selectTileType: typeof selectTileType;
-  unselectTileType: typeof unselectTileType;
+interface Props {
+  selectedTileType: string | null;
+  selectTileType: Function;
+  unselectTileType: Function;
 }
 
 /**
  * The toolbar component lets us select which tile type
  * we would like to paint with.
  */
-class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}> {
+export class ToolbarView extends React.Component<Props, {}> {
   /**
    * Handle a tile click event and toggle our selected tile.
    */
@@ -59,17 +54,11 @@ class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}
   }
 }
 
-/**
- * Wrap the toolbar component with a react-redux connect()
- * higher-order-component. This subscribes to store changes
- * and pulls in the selected tile. It also binds the select
- * and unselect action creators.
- */
-export const Toolbar = connect(
-  (state: StoreState, props: {}) => {
-    return {
-      selectedTileType: selectedTileTypeSelector(state, props),
-    };
+export const Toolbar = connectStub(
+  {
+    selectedTileType: null,
+    selectTileType: () => null,
+    unselectTileType: () => null,
   },
-  {selectTileType, unselectTileType}
-)(ToolbarView);
+  ToolbarView
+);

@@ -1,25 +1,20 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {connect} from 'react-redux';
-import {Layer, StoreState} from '../../types';
-import {layerSelector} from '../../data/selectors';
+import {connectStub} from '../../lib/connectStub';
+import {Layer} from '../../types';
 import {Tile} from '../tile/Tile';
 import './TilesLayer.css';
 
 // Primary input props.
 interface Props {
   name: Layer['name'];
-}
-
-// Props filled in by the react-redux connect() higher-order-component.
-interface PropsFromState {
   tiles: Layer['tiles'];
 }
 
 /**
  * The tiles layer is responsible for rendering all the tiles in a given layer.
  */
-export class TilesLayerView extends React.PureComponent<Props & PropsFromState, {}> {
+export class TilesLayerView extends React.PureComponent<Props, {}> {
   render() {
     return (
       <div className={`layer tiles-layer tiles-layer--${this.props.name}`}>
@@ -37,9 +32,12 @@ export class TilesLayerView extends React.PureComponent<Props & PropsFromState, 
   }
 }
 
-/**
- * Connect to the our store and fetch the state of a given layer.
- */
-export const TilesLayer = connect((state: StoreState, props: Props) => {
-  return {...layerSelector(state, props)};
-})(TilesLayerView);
+// We'll be connecting this to our Redux store during
+// the tutorial. This is just a stub to make typechecking
+// pass.
+export const TilesLayer = connectStub(
+  {
+    tiles: [],
+  },
+  TilesLayerView
+);

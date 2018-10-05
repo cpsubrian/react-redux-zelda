@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {connect} from 'react-redux';
-import {Point, TileInstance, StoreState} from '../../types';
+import {connectStub} from '../../lib/connectStub';
+import {Point, TileInstance} from '../../types';
 import {idgen} from '../../lib/idgen';
-import {selectedTileTypeSelector} from '../../data/selectors';
 import {tiles} from '../../tiles';
-import {paintTile, eraseTile} from '../../data/action_creators';
 import {MouseListener} from '../mouse/MouseListener';
 import {TilesLayer} from '../layers/TilesLayer';
 import {CursorLayer} from '../layers/CursorLayer';
@@ -16,15 +14,9 @@ interface Props {
   width: number;
   height: number;
   cellSize: number;
-}
-
-// Props provided by the react-redux higher order component wrapper.
-interface PropsFromState {
-  selectedTileType: StoreState['selectedTileType'];
-}
-interface PropsFromDispatch {
-  paintTile: typeof paintTile;
-  eraseTile: typeof eraseTile;
+  selectedTileType: string | null;
+  paintTile: Function;
+  eraseTile: Function;
 }
 
 // We track the current 'painting' status in local state.
@@ -36,7 +28,7 @@ interface State {
  * The map view pulls together the cursor and tile layers. It is the
  * main UI responsible for painting our game scene.
  */
-class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDispatch, {}> {
+export class MapView extends React.PureComponent<Props, {}> {
   public state: State = {
     isPainting: false,
   };
@@ -140,17 +132,14 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
   }
 }
 
-/**
- * Wrap the map component with a react-redux connect()
- * higher-order-component. This subscribes to store changes
- * and pulls in the selected tile. It also binds the paint
- * and erase action creators.
- */
-export const Map = connect(
-  (state: StoreState, props: Props) => {
-    return {
-      selectedTileType: selectedTileTypeSelector(state, props),
-    };
+// We'll be connecting this to our Redux store during
+// the tutorial. This is just a stub to make typechecking
+// pass.
+export const Map = connectStub(
+  {
+    selectedTileType: null,
+    paintTile: () => null,
+    eraseTile: () => null,
   },
-  {paintTile, eraseTile}
-)(MapView);
+  MapView
+);
