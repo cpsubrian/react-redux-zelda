@@ -1,9 +1,9 @@
 import {AnyAction} from 'redux';
-import {StoreState, ActionHandlers, ActionTypes, TileInstance} from '../types';
+import {StoreState, ActionHandlers, ActionTypes} from '../types';
 import * as Actions from './actions';
 
 // Initial redux store state.
-const initialState: Readonly<StoreState> = {
+const initialState: StoreState = {
   selectedTileType: null,
   layers: {
     terrain: {
@@ -51,7 +51,7 @@ const handlers: ActionHandlers = {
     const {layer, tile} = action;
     const index = state.layers[layer].tiles.findIndex(({id}) => tile.id === id);
     let oldTiles = state.layers[layer].tiles;
-    let newTiles: ReadonlyArray<TileInstance> = [];
+    let newTiles: typeof oldTiles = [];
 
     // If tile already exists replace it, otherwise add it to the existing tiles.
     if (index >= 0) {
