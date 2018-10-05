@@ -9,10 +9,8 @@ import {Tile} from '../tile/Tile';
 import './Toolbar.css';
 
 // Props provided by the react-redux higher order component wrapper.
-interface PropsFromState {
+interface Props {
   selectedTileType: string;
-}
-interface PropsFromDispatch {
   selectTileType: typeof selectTileType;
   unselectTileType: typeof unselectTileType;
 }
@@ -21,7 +19,7 @@ interface PropsFromDispatch {
  * The toolbar component lets us select which tile type
  * we would like to paint with.
  */
-class ToolbarView extends React.Component<PropsFromState & PropsFromDispatch, {}> {
+class ToolbarView extends React.Component<Props, {}> {
   /**
    * Handle a tile click event and toggle our selected tile.
    */

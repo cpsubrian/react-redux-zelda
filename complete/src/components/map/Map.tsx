@@ -20,7 +20,7 @@ interface Props {
 
 // Props provided by the react-redux higher order component wrapper.
 interface PropsFromState {
-  selectedTileType: StoreState['selectedTileType'];
+  selectedTileType: string;
 }
 interface PropsFromDispatch {
   paintTile: typeof paintTile;
