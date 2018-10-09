@@ -40,15 +40,6 @@ export const tiles: TileSet = {
       },
     },
   },
-  dirt: {
-    tileType: 'dirt',
-    layer: 'terrain',
-    size: [16, 16],
-    sprite: {
-      sheet: 'overworld',
-      sprite: 'dirt',
-    },
-  },
   water: {
     tileType: 'water',
     layer: 'terrain',
@@ -56,6 +47,15 @@ export const tiles: TileSet = {
     sprite: {
       sheet: 'overworld',
       sprite: 'water',
+    },
+  },
+  dirt: {
+    tileType: 'dirt',
+    layer: 'terrain',
+    size: [16, 16],
+    sprite: {
+      sheet: 'overworld',
+      sprite: 'dirt',
     },
   },
   boulder: {
