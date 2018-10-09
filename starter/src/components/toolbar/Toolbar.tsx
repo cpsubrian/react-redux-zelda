@@ -118,6 +118,9 @@ export class ToolbarView extends React.Component<Props, {}> {
   }
 }
 
+// We'll be connecting this to our Redux store during
+// the tutorial. This is just a stub to make typechecking
+// pass.
 export const Toolbar = connectStub(
   {
     selectedTileType: null,
