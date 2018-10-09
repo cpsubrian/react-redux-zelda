@@ -9,6 +9,6 @@
     "test": "../node_modules/.bin/react-scripts-ts test --env=jsdom",
     "eject": "../node_modules/.bin/react-scripts-ts eject",
     "serve": "../node_modules/.bin/serve -s build",
-    "prod": "yarn build && yarn serve"
+    "prod": "npm run build && npm run serve"
   }
 }
