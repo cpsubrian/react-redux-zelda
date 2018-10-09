@@ -1,0 +1,10 @@
+.sprite-cliffs_water {
+  width: 16px;
+  height: 16px;
+  background-image: url('./cliffs_water.png');
+}
+
+/* water_rock */
+.sprite-cliffs_water--bubbles {
+  background-position: -302px -845px;
+}
