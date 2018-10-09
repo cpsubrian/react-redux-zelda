@@ -24,6 +24,29 @@ export const tiles: TileSet = {
         saw: {sheet: 'overworld', sprite: 'grass_edge_water_saw'},
         sae: {sheet: 'overworld', sprite: 'grass_edge_water_sae'},
       },
+      dirt: {
+        n: {sheet: 'overworld', sprite: 'grass_edge_dirt_n'},
+        s: {sheet: 'overworld', sprite: 'grass_edge_dirt_s'},
+        e: {sheet: 'overworld', sprite: 'grass_edge_dirt_e'},
+        w: {sheet: 'overworld', sprite: 'grass_edge_dirt_w'},
+        ne: {sheet: 'overworld', sprite: 'grass_edge_water_ne'},
+        nw: {sheet: 'overworld', sprite: 'grass_edge_water_nw'},
+        se: {sheet: 'overworld', sprite: 'grass_edge_water_se'},
+        sw: {sheet: 'overworld', sprite: 'grass_edge_water_sw'},
+        naw: {sheet: 'overworld', sprite: 'grass_edge_dirt_naw'},
+        nae: {sheet: 'overworld', sprite: 'grass_edge_dirt_nae'},
+        saw: {sheet: 'overworld', sprite: 'grass_edge_dirt_saw'},
+        sae: {sheet: 'overworld', sprite: 'grass_edge_dirt_sae'},
+      },
+    },
+  },
+  dirt: {
+    tileType: 'dirt',
+    layer: 'terrain',
+    size: [16, 16],
+    sprite: {
+      sheet: 'overworld',
+      sprite: 'dirt',
     },
   },
   water: {
@@ -33,6 +56,24 @@ export const tiles: TileSet = {
     sprite: {
       sheet: 'overworld',
       sprite: 'water',
+    },
+  },
+  boulder: {
+    tileType: 'boulder',
+    layer: 'objects',
+    size: [32, 32],
+    sprite: {
+      sheet: 'overworld',
+      sprite: 'boulder',
+    },
+  },
+  stone: {
+    tileType: 'stone',
+    layer: 'objects',
+    size: [16, 16],
+    sprite: {
+      sheet: 'overworld',
+      sprite: 'stone',
     },
   },
   tree: {
@@ -87,6 +128,33 @@ export const tiles: TileSet = {
     sprite: {
       sheet: 'overworld',
       sprite: 'spot',
+    },
+  },
+  rock: {
+    tileType: 'rock',
+    layer: 'objects',
+    size: [8, 8],
+    sprite: {
+      sheet: 'overworld',
+      sprite: 'rock',
+    },
+  },
+  skeleton: {
+    tileType: 'skeleton',
+    layer: 'objects',
+    size: [32, 32],
+    sprite: {
+      sheet: 'overworld',
+      sprite: 'skeleton',
+    },
+  },
+  bubbles: {
+    tileType: 'bubbles',
+    layer: 'objects',
+    size: [16, 16],
+    sprite: {
+      sheet: 'cliffs_water',
+      sprite: 'bubbles',
     },
   },
 };

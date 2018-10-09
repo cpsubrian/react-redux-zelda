@@ -107,14 +107,15 @@ class MapView extends React.PureComponent<Props & PropsFromState & PropsFromDisp
    */
   public render() {
     return (
-      <div className="map" onMouseLeave={this.handleMouseLeave}>
-        <div
-          className="layers"
-          style={{
-            width: this.props.width,
-            height: this.props.height,
-          }}
-        >
+      <div
+        className="map"
+        style={{
+          width: this.props.width,
+          height: this.props.height,
+        }}
+        onMouseLeave={this.handleMouseLeave}
+      >
+        <div className="layers">
           {/* Render the tile layers */}
           <TilesLayer name="terrain" />
           <TilesLayer name="objects" />

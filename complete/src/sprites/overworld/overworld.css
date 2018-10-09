@@ -3,12 +3,16 @@
   height: 16px;
   background-image: url('./overworld.png');
 }
+
+/* grass */
 .sprite-overworld--grass {
   width: 16px;
   height: 16px;
   background-color: #4b974c;
   background-image: none;
 }
+
+/* grass-water edge */
 .sprite-overworld--grass_edge_water_n {
   width: 16px;
   height: 8px;
@@ -69,11 +73,74 @@
   height: 8px;
   background-position: -27px -194px;
 }
+
+/* grass-dirt edge */
+.sprite-overworld--grass_edge_dirt_n {
+  width: 16px;
+  height: 8px;
+  background-position: -99px -227px;
+}
+.sprite-overworld--grass_edge_dirt_s {
+  width: 16px;
+  height: 8px;
+  background-position: -99px -185px;
+}
+.sprite-overworld--grass_edge_dirt_e {
+  width: 8px;
+  height: 16px;
+  background-position: -82px -202px;
+}
+.sprite-overworld--grass_edge_dirt_w {
+  width: 8px;
+  height: 16px;
+  background-position: -124px -202px;
+}
+.sprite-overworld--grass_edge_dirt_naw {
+  width: 8px;
+  height: 8px;
+  background-position: -116px -218px;
+}
+.sprite-overworld--grass_edge_dirt_nae {
+  width: 8px;
+  height: 8px;
+  background-position: -90px -218px;
+}
+.sprite-overworld--grass_edge_dirt_saw {
+  width: 8px;
+  height: 8px;
+  background-position: -116px -194px;
+}
+.sprite-overworld--grass_edge_dirt_sae {
+  width: 8px;
+  height: 8px;
+  background-position: -90px -194px;
+}
+
+/* dirt */
+.sprite-overworld--dirt {
+  width: 16px;
+  height: 16px;
+  background: #877848;
+}
+
+/* water */
 .sprite-overworld--water {
   width: 16px;
   height: 16px;
   background-color: #5a81be;
   background-image: none;
+}
+
+/* objects */
+.sprite-overworld--boulder {
+  width: 32px;
+  height: 32px;
+  background-position: -386px -44px;
+}
+.sprite-overworld--stone {
+  width: 16px;
+  height: 16px;
+  background-position: -304px -74px;
 }
 .sprite-overworld--tree_trunk {
   width: 32px;
@@ -105,4 +172,14 @@
   width: 8px;
   height: 8px;
   background-position: -240px -39px;
+}
+.sprite-overworld--rock {
+  width: 8px;
+  height: 8px;
+  background-position: -512px -56px;
+}
+.sprite-overworld--skeleton {
+  width: 32px;
+  height: 32px;
+  background-position: -62px -340px;
 }

@@ -1,30 +1,70 @@
 .toolbar {
   flex: 0 0 auto;
-  margin-top: 4vh;
-  padding: 5px 10px;
-  background: #222;
-  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: row;
+  margin-left: 8px;
   opacity: 0.5;
   transition: opacity 150ms ease-in-out;
 }
 .toolbar:hover {
   opacity: 1;
 }
+.toolbar .preview {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100px;
+  height: 132px;
+  margin-left: 8px;
+  padding: 8px 16px;
+  background: #222;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.15);
+}
+.toolbar .preview .tile {
+  margin: auto 0;
+}
+.toolbar .preview .name {
+  font-size: 14px;
+}
+.toolbar .layers {
+  flex: 1 1 auto;
+  overflow-y: scroll;
+  background: #222;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.15);
+}
+.toolbar .layer-name {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  color: #ccc;
+}
 .toolbar .tiles {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  padding: 4px;
+  width: 100px;
 }
-.toolbar .tile {
+.toolbar .tile-button {
   flex: 0 0 auto;
-  margin: 8px;
+  width: 34px;
+  height: 34px;
+  margin: 6px;
   border: 1px solid transparent;
+  background: #666;
+  overflow: hidden;
 }
-.toolbar .tile:hover {
+.toolbar .tile-button:hover {
   border: 1px solid rgba(255, 255, 255, 0.5);
   cursor: pointer;
 }
-.toolbar .tile.selected {
-  border: 1px solid rgba(255, 255, 255, 0.9);
+.toolbar .tile-button--selected {
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+.toolbar .tile {
+  transform-origin: top left;
 }
